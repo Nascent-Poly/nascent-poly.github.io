@@ -3,204 +3,467 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nascent Poly — Developer Tools</title>
-    <meta name="description" content="Nascent Poly builds offline-first developer productivity tools for VS Code. No API calls, no telemetry, just speed.">
+    <title>Nascent Poly | Enterprise Natural-Language Interpreter</title>
+    <meta name="description" content="Nascent Poly builds an offline, deterministic natural-language interpreter for regulated teams in pharma and manufacturing.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0e0e16;
-            --surface: #1a1a2e;
-            --accent: #f7768e;
-            --accent2: #ff9e64;
-            --text: #c0caf5;
-            --muted: #565f89;
-            --blue: #7aa2f7;
+            --bg-ink: #081a1f;
+            --bg-deep: #102a2f;
+            --paper: #f2efe8;
+            --paper-2: #e6dfd2;
+            --accent: #f06b28;
+            --accent-2: #11a38a;
+            --ink: #101717;
+            --ink-soft: #2d3b3b;
+            --line: #c7bca8;
+            --shell: rgba(255, 255, 255, 0.62);
+            --shadow: 0 20px 45px rgba(8, 26, 31, 0.22);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+            color: var(--ink);
+            background: radial-gradient(circle at 10% 0%, #1a4046 0%, #0f2a30 30%, #081a1f 100%);
             min-height: 100vh;
+            line-height: 1.45;
+        }
+
+        .backdrop {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 38px 38px;
+            mask-image: radial-gradient(circle at 40% 20%, black 20%, transparent 85%);
+            opacity: 0.35;
+            z-index: 0;
+        }
+
+        .wrapper {
+            width: min(1100px, calc(100% - 2.25rem));
+            margin: 1.2rem auto 2rem;
+            background: linear-gradient(150deg, rgba(242, 239, 232, 0.96), rgba(230, 223, 210, 0.93));
+            border: 1px solid rgba(199, 188, 168, 0.65);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topbar {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
+            padding: 1rem 1.4rem;
+            border-bottom: 1px solid var(--line);
+            background: var(--shell);
+            backdrop-filter: blur(10px);
+        }
+
+        .brand {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--bg-deep);
+        }
+
+        .status {
+            font-size: 0.82rem;
+            color: var(--ink-soft);
+            border: 1px solid rgba(16, 42, 47, 0.15);
+            border-radius: 999px;
+            padding: 0.35rem 0.7rem;
+            background: rgba(17, 163, 138, 0.11);
         }
 
         .hero {
-            text-align: center;
-            padding: 6rem 2rem 4rem;
-            max-width: 640px;
+            padding: 3.6rem 1.6rem 2.8rem;
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 1.3rem;
+            align-items: center;
         }
 
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
+        h1,
+        h2,
+        h3 {
+            font-family: "Space Grotesk", sans-serif;
+            line-height: 1.05;
+            color: var(--bg-deep);
         }
 
-        .tagline {
-            font-size: 1.1rem;
-            color: var(--muted);
-            margin-bottom: 3rem;
+        h1 {
+            font-size: clamp(2.2rem, 4.5vw, 3.9rem);
+            letter-spacing: -0.035em;
+            max-width: 18ch;
         }
 
-        .product-card {
-            background: var(--surface);
-            border: 1px solid #2a2a3e;
+        .hero p {
+            max-width: 56ch;
+            margin-top: 1rem;
+            color: var(--ink-soft);
+            font-size: 1.02rem;
+        }
+
+        .hero-shell {
+            background: #0f2328;
+            color: #b8d6d5;
             border-radius: 16px;
-            padding: 2.5rem;
-            margin: 0 2rem 2rem;
-            max-width: 560px;
-            text-align: left;
+            padding: 1rem;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+            transform: translateY(10px);
+            opacity: 0;
+            animation: rise 650ms ease 120ms forwards;
         }
 
-        .product-card h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+        .shell-row {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.88rem;
+            margin-bottom: 0.45rem;
         }
 
-        .product-card .subtitle {
-            color: var(--muted);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
+        .shell-row span {
+            color: #11a38a;
+            margin-right: 0.35rem;
         }
 
-        .features {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-
-        .features li {
-            padding: 0.4rem 0;
-            font-size: 0.95rem;
-        }
-
-        .features li::before {
-            content: "→ ";
-            color: var(--accent);
-            font-weight: bold;
+        .hero-main {
+            transform: translateY(14px);
+            opacity: 0;
+            animation: rise 650ms ease forwards;
         }
 
         .cta-row {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
+            margin-top: 1.45rem;
         }
 
         .btn {
-            display: inline-block;
-            padding: 0.7rem 1.6rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
             text-decoration: none;
-            transition: transform 0.15s, box-shadow 0.15s;
+            border-radius: 10px;
+            padding: 0.67rem 1rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: transform 180ms ease, box-shadow 180ms ease;
         }
 
-        .btn:hover {
+        .btn:hover,
+        .btn:focus-visible {
             transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(247, 118, 142, 0.25);
+            box-shadow: 0 8px 20px rgba(6, 33, 39, 0.2);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            color: #fff;
+            background: linear-gradient(120deg, var(--accent), #f89e5d);
+            color: #fffdf7;
         }
 
         .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--muted);
-            color: var(--text);
+            border: 1px solid rgba(16, 42, 47, 0.18);
+            color: var(--bg-deep);
+            background: rgba(255, 255, 255, 0.45);
         }
 
         .stats {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin: 2rem 0;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.8rem;
+            padding: 0 1.6rem 2rem;
         }
 
         .stat {
-            text-align: center;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(16, 42, 47, 0.08);
+            border-radius: 13px;
+            padding: 0.9rem;
+            transform: translateY(12px);
+            opacity: 0;
+            animation: rise 540ms ease forwards;
         }
 
-        .stat-num {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--blue);
+        .stat:nth-child(2) { animation-delay: 80ms; }
+        .stat:nth-child(3) { animation-delay: 140ms; }
+        .stat:nth-child(4) { animation-delay: 190ms; }
+
+        .stat strong {
+            display: block;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 1.38rem;
+            color: var(--bg-deep);
         }
 
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .stat span {
+            color: var(--ink-soft);
+            font-size: 0.84rem;
         }
 
-        footer {
-            margin-top: auto;
-            padding: 2rem;
-            color: var(--muted);
-            font-size: 0.8rem;
-            text-align: center;
+        .sections {
+            padding: 0 1.6rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.9rem;
         }
 
-        @media (max-width: 480px) {
-            .hero { padding: 3rem 1rem 2rem; }
-            .logo { font-size: 2rem; }
-            .product-card { margin: 0 1rem 1rem; padding: 1.5rem; }
+        .panel {
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(16, 42, 47, 0.09);
+            border-radius: 16px;
+            padding: 1.05rem;
+        }
+
+        .panel h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .panel p {
+            color: var(--ink-soft);
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .list {
+            list-style: none;
+            display: grid;
+            gap: 0.52rem;
+        }
+
+        .list li {
+            font-size: 0.91rem;
+            color: var(--ink-soft);
+            padding-left: 1.1rem;
+            position: relative;
+        }
+
+        .list li::before {
+            content: "";
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 2px;
+            background: linear-gradient(130deg, var(--accent-2), var(--accent));
+            position: absolute;
+            left: 0;
+            top: 0.4rem;
+        }
+
+        .band {
+            margin: 0 1.6rem 2rem;
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid rgba(16, 42, 47, 0.12);
+            background: linear-gradient(110deg, #10323a, #173f45);
+            color: #d8ebe4;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .band h3 {
+            color: #f8f1df;
+            font-size: 1.2rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .band p {
+            color: #b5d8cf;
+            font-size: 0.92rem;
+        }
+
+        .foot {
+            border-top: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding: 1.2rem 1.6rem 1.5rem;
+            color: var(--ink-soft);
+            font-size: 0.82rem;
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .foot a {
+            color: var(--bg-deep);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        @keyframes rise {
+            from {
+                transform: translateY(12px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .sections {
+                grid-template-columns: 1fr;
+            }
+
+            .band {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .wrapper {
+                width: min(1100px, calc(100% - 1rem));
+                margin-top: 0.5rem;
+                border-radius: 18px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .topbar,
+            .hero,
+            .stats,
+            .sections,
+            .band,
+            .foot {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="backdrop" aria-hidden="true"></div>
+    <main class="wrapper">
+        <header class="topbar">
+            <div class="brand">Nascent Poly</div>
+            <div class="status">Offline-first, readiness program underway</div>
+        </header>
 
-    <div class="hero">
-        <div class="logo">Nascent Poly</div>
-        <p class="tagline">Offline-first developer tools. No API calls. No telemetry. Just speed.</p>
-    </div>
-
-    <div class="product-card">
-        <h2>🚀 Launchpad</h2>
-        <p class="subtitle">Natural language commands for VS Code</p>
-
-        <ul class="features">
-            <li><strong>123 commands</strong> — files, git, testing, debugging, editing, themes & more</li>
-            <li><strong>Sub-3ms</strong> — instant classification, no loading spinners</li>
-            <li><strong>100% offline</strong> — zero network calls, zero telemetry</li>
-            <li><strong>Plain English</strong> — type "run my tests" or "commit changes" and it just works</li>
-        </ul>
-
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-num">123</div>
-                <div class="stat-label">Commands</div>
+        <section class="hero">
+            <div class="hero-main">
+                <h1>A natural-language interpreter built for regulated environments.</h1>
+                <p>
+                    Nascent Poly translates plain-English instructions into precise system actions with deterministic behavior, local execution,
+                    and audit-oriented workflows. Designed for pharma and manufacturing teams operating under strict procedural controls.
+                </p>
+                <div class="cta-row">
+                    <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Launchpad</a>
+                    <a class="btn btn-secondary" href="mailto:hello@nascentpoly.com">Request Pilot Briefing</a>
+                </div>
             </div>
-            <div class="stat">
-                <div class="stat-num">&lt;3ms</div>
-                <div class="stat-label">Latency</div>
+
+            <aside class="hero-shell" aria-label="Launchpad command preview">
+                <div class="shell-row"><span>&gt;</span>run my tests</div>
+                <div class="shell-row">Action: Test: Run All Tests</div>
+                <div class="shell-row"><span>&gt;</span>commit changes</div>
+                <div class="shell-row">Action: Git: Commit</div>
+                <div class="shell-row"><span>&gt;</span>open terminal</div>
+                <div class="shell-row">Action: Toggle Terminal</div>
+            </aside>
+        </section>
+
+        <section class="stats" aria-label="Performance and trust stats">
+            <article class="stat"><strong>123</strong><span>Command intents in Launchpad</span></article>
+            <article class="stat"><strong>&lt;3ms</strong><span>Typical routing latency</span></article>
+            <article class="stat"><strong>0</strong><span>Telemetry and API calls required</span></article>
+            <article class="stat"><strong>Deterministic</strong><span>Repeatable outcomes for controlled workflows</span></article>
+        </section>
+
+        <section class="sections">
+            <article class="panel">
+                <h2>Interpreter Foundations</h2>
+                <p>
+                    The platform is designed for high-consequence operations where explainability, traceability,
+                    and procedural consistency matter.
+                </p>
+                <ul class="list">
+                    <li>Deterministic interpretation for repeated commands across shifts and sites</li>
+                    <li>Reviewable decision traces for QA, CAPA, and internal governance</li>
+                    <li>Offline operation for controlled networks and restricted environments</li>
+                    <li>Configurable vocabulary for domain terms, SOP language, and operator phrasing</li>
+                </ul>
+            </article>
+
+            <article class="panel">
+                <h2>From Seed Product to Platform</h2>
+                <p>
+                    Launchpad is the first public surface: a lightweight VS Code experience that demonstrates
+                    interpreter speed, reliability, and natural-language control in daily workflows.
+                </p>
+                <ul class="list">
+                    <li>Natural-language routing for files, Git, tests, and debugging</li>
+                    <li>Trace mode for controlled validation and acceptance testing</li>
+                    <li>No dependency on external inference infrastructure</li>
+                    <li>Production roadmap focused on pharma and manufacturing operations</li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="sections" aria-label="Compliance posture">
+            <article class="panel" style="grid-column: 1 / -1;">
+                <h2>Current Compliance Posture</h2>
+                <p>
+                    We do not currently claim 21 CFR Part 11 compliance. Our focus today is practical readiness: deterministic behavior,
+                    offline operation, and audit-oriented workflows, with a dated Part 11 readiness program in progress.
+                </p>
+                <ul class="list">
+                    <li>Safe claim today: built for regulated environments</li>
+                    <li>Safe claim today: offline, deterministic, audit-oriented workflow support</li>
+                    <li>Not claimed today: full 21 CFR Part 11 compliance certification</li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="band">
+            <div>
+                <h3>Now onboarding pilot partners in regulated industries.</h3>
+                <p>
+                    We are extending the interpreter from developer workflows into production-facing command surfaces for labs, quality systems, and manufacturing operations.
+                </p>
             </div>
-            <div class="stat">
-                <div class="stat-num">0</div>
-                <div class="stat-label">API Calls</div>
-            </div>
-        </div>
+            <a class="btn btn-primary" href="mailto:hello@nascentpoly.com">Contact Nascent Poly</a>
+        </section>
 
-        <div class="cta-row">
-            <a href="https://marketplace.visualstudio.com/items?itemName=nascent-poly.launchpad-command-palette" class="btn btn-primary">Install from Marketplace</a>
-            <a href="https://github.com/nascent-poly/launchpad" class="btn btn-secondary">GitHub</a>
-        </div>
-    </div>
-
-    <footer>
-        &copy; 2026 Nascent Poly. All rights reserved.
-    </footer>
-
+        <footer class="foot">
+            <span>&copy; 2026 Nascent Poly. Natural-language control for regulated workflows.</span>
+            <span>
+                <a href="https://www.nascentpoly.com/">nascentpoly.com</a>
+                |
+                <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">VS Code Marketplace</a>
+            </span>
+        </footer>
+    </main>
 </body>
 </html>
