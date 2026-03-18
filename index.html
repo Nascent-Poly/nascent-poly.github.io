@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nascent Poly | Enterprise Natural-Language Interpreter</title>
     <meta name="description" content="Nascent Poly builds an offline, deterministic natural-language interpreter for regulated teams in pharma and manufacturing.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 32 Q14 24 20 28 Q26 32 32 28 Q38 24 40 30' stroke='%2311a38a' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M40 32 L56 18 A24 24 0 1 0 56 46 Z' fill='%23f06b28'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -79,6 +80,15 @@
             text-transform: uppercase;
             font-weight: 700;
             color: var(--bg-deep);
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .brand svg {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
         }
 
         .status {
@@ -367,7 +377,17 @@
     <div class="backdrop" aria-hidden="true"></div>
     <main class="wrapper">
         <header class="topbar">
-            <div class="brand">Nascent Poly</div>
+            <div class="brand">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Nascent Poly logo">
+                    <!-- Nascent transcript (wavy tail) -->
+                    <path d="M6 34 Q12 22 20 30 Q28 38 34 30" stroke="#11a38a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                    <!-- Polymerase (pacman body) -->
+                    <path d="M34 32 L52 18 A22 22 0 1 0 52 46 Z" fill="#f06b28"/>
+                    <!-- Eye -->
+                    <circle cx="44" cy="28" r="2.5" fill="#f2efe8"/>
+                </svg>
+                Nascent Poly
+            </div>
             <div class="status">Offline-first, readiness program underway</div>
         </header>
 
@@ -457,7 +477,13 @@
         </section>
 
         <footer class="foot">
-            <span>&copy; 2026 Nascent Poly. Natural-language control for regulated workflows.</span>
+            <span>
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;vertical-align:-3px;margin-right:4px">
+                    <path d="M6 34 Q12 22 20 30 Q28 38 34 30" stroke="#11a38a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                    <path d="M34 32 L52 18 A22 22 0 1 0 52 46 Z" fill="#f06b28"/>
+                </svg>
+                &copy; 2026 Nascent Poly. Natural-language control for regulated workflows.
+            </span>
             <span>
                 <a href="https://www.nascentpoly.com/">nascentpoly.com</a>
                 |
