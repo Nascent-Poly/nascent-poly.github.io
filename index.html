@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nascent Poly | Enterprise Natural-Language Interpreter</title>
+    <title>Nascent Poly | Natural-Language Interpreter</title>
     <meta name="description" content="Nascent Poly builds an offline, deterministic natural-language interpreter for regulated teams in pharma and manufacturing.">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 32 Q14 24 20 28 Q26 32 32 28 Q38 24 40 30' stroke='%2311a38a' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M40 32 L56 18 A24 24 0 1 0 56 46 Z' fill='%23f06b28'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='18' width='20' height='3.5' rx='1.5' fill='%2300d4aa' opacity='0.3'/%3E%3Crect x='2' y='30' width='26' height='3.5' rx='1.5' fill='%2300d4aa' opacity='0.55'/%3E%3Crect x='2' y='42' width='16' height='3.5' rx='1.5' fill='%2300d4aa' opacity='0.3'/%3E%3Cpolygon points='26,14 40,14 62,32 40,50 26,50' fill='%2300d4aa'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-ink: #081a1f;
-            --bg-deep: #102a2f;
-            --paper: #f2efe8;
-            --paper-2: #e6dfd2;
-            --accent: #f06b28;
-            --accent-2: #11a38a;
-            --ink: #101717;
-            --ink-soft: #2d3b3b;
-            --line: #c7bca8;
-            --shell: rgba(255, 255, 255, 0.62);
-            --shadow: 0 20px 45px rgba(8, 26, 31, 0.22);
+            --bg: #080c14;
+            --surface: #0d1219;
+            --surface-2: #141c28;
+            --surface-3: #1a2436;
+            --accent: #00d4aa;
+            --accent-dim: rgba(0, 212, 170, 0.07);
+            --accent-line: rgba(0, 212, 170, 0.18);
+            --cta: #f06b28;
+            --text: #b8c8d8;
+            --text-dim: #556878;
+            --text-bright: #e2ecf4;
+            --border: #1a2535;
+            --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
         }
 
         * {
@@ -32,10 +34,10 @@
 
         body {
             font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
-            color: var(--ink);
-            background: radial-gradient(circle at 10% 0%, #1a4046 0%, #0f2a30 30%, #081a1f 100%);
+            color: var(--text);
+            background: var(--bg);
             min-height: 100vh;
-            line-height: 1.45;
+            line-height: 1.5;
         }
 
         .backdrop {
@@ -43,112 +45,147 @@
             inset: 0;
             pointer-events: none;
             background-image:
-                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-            background-size: 38px 38px;
-            mask-image: radial-gradient(circle at 40% 20%, black 20%, transparent 85%);
-            opacity: 0.35;
+                linear-gradient(rgba(0, 212, 170, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 170, 0.025) 1px, transparent 1px);
+            background-size: 32px 32px;
+            opacity: 0.7;
             z-index: 0;
         }
 
         .wrapper {
-            width: min(1100px, calc(100% - 2.25rem));
-            margin: 1.2rem auto 2rem;
-            background: linear-gradient(150deg, rgba(242, 239, 232, 0.96), rgba(230, 223, 210, 0.93));
-            border: 1px solid rgba(199, 188, 168, 0.65);
-            border-radius: 24px;
+            width: min(1100px, calc(100% - 2rem));
+            margin: 1.5rem auto 2.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
             box-shadow: var(--shadow);
             overflow: hidden;
             position: relative;
             z-index: 1;
         }
 
+        .wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.35;
+        }
+
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.4rem;
-            border-bottom: 1px solid var(--line);
-            background: var(--shell);
-            backdrop-filter: blur(10px);
+            padding: 0.85rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(13, 18, 25, 0.85);
+            backdrop-filter: blur(12px);
         }
 
         .brand {
             font-family: "Space Grotesk", sans-serif;
-            font-size: 1rem;
-            letter-spacing: 0.09em;
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             font-weight: 700;
-            color: var(--bg-deep);
+            color: var(--text-bright);
             display: flex;
             align-items: center;
             gap: 0.55rem;
         }
 
         .brand svg {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             flex-shrink: 0;
+            color: var(--accent);
         }
 
         .status {
-            font-size: 0.82rem;
-            color: var(--ink-soft);
-            border: 1px solid rgba(16, 42, 47, 0.15);
-            border-radius: 999px;
-            padding: 0.35rem 0.7rem;
-            background: rgba(17, 163, 138, 0.11);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.72rem;
+            color: var(--accent);
+            border: 1px solid var(--accent-line);
+            border-radius: 3px;
+            padding: 0.28rem 0.6rem;
+            background: var(--accent-dim);
+            letter-spacing: 0.04em;
         }
 
         .hero {
-            padding: 3.6rem 1.6rem 2.8rem;
+            padding: 3.2rem 1.6rem 2.4rem;
             display: grid;
-            grid-template-columns: 1.25fr 1fr;
-            gap: 1.3rem;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 2rem;
             align-items: center;
         }
 
-        h1,
-        h2,
-        h3 {
+        h1, h2, h3 {
             font-family: "Space Grotesk", sans-serif;
-            line-height: 1.05;
-            color: var(--bg-deep);
+            line-height: 1.08;
+            color: var(--text-bright);
         }
 
         h1 {
-            font-size: clamp(2.2rem, 4.5vw, 3.9rem);
-            letter-spacing: -0.035em;
+            font-size: clamp(2rem, 4.5vw, 3.5rem);
+            letter-spacing: -0.03em;
             max-width: 18ch;
         }
 
         .hero p {
-            max-width: 56ch;
-            margin-top: 1rem;
-            color: var(--ink-soft);
-            font-size: 1.02rem;
+            max-width: 52ch;
+            margin-top: 1.1rem;
+            color: var(--text);
+            font-size: 0.98rem;
+            line-height: 1.65;
         }
 
         .hero-shell {
-            background: #0f2328;
-            color: #b8d6d5;
-            border-radius: 16px;
-            padding: 1rem;
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+            background: #060a10;
+            color: #5ea88e;
+            border-radius: 6px;
+            padding: 1rem 1.1rem;
+            border: 1px solid var(--border);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.82rem;
+            position: relative;
+            overflow: hidden;
             transform: translateY(10px);
             opacity: 0;
             animation: rise 650ms ease 120ms forwards;
         }
 
+        .hero-shell::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 212, 170, 0.012) 2px,
+                rgba(0, 212, 170, 0.012) 4px
+            );
+            pointer-events: none;
+        }
+
         .shell-row {
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 0.88rem;
-            margin-bottom: 0.45rem;
+            margin-bottom: 0.3rem;
+            line-height: 1.55;
         }
 
         .shell-row span {
-            color: #11a38a;
-            margin-right: 0.35rem;
+            color: var(--accent);
+            margin-right: 0.25rem;
+        }
+
+        .shell-response {
+            color: #3d5e50;
+            padding-left: 1.15rem;
+            margin-bottom: 0.55rem;
         }
 
         .hero-main {
@@ -159,126 +196,143 @@
 
         .cta-row {
             display: flex;
-            gap: 0.8rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
-            margin-top: 1.45rem;
+            margin-top: 1.5rem;
         }
 
         .btn {
             text-decoration: none;
-            border-radius: 10px;
-            padding: 0.67rem 1rem;
-            font-size: 0.92rem;
+            border-radius: 5px;
+            padding: 0.6rem 1.05rem;
+            font-size: 0.88rem;
             font-weight: 600;
-            transition: transform 180ms ease, box-shadow 180ms ease;
+            transition: transform 150ms ease, box-shadow 150ms ease;
         }
 
-        .btn:hover,
-        .btn:focus-visible {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(6, 33, 39, 0.2);
+        .btn:hover, .btn:focus-visible {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
         }
 
         .btn-primary {
-            background: linear-gradient(120deg, var(--accent), #f89e5d);
-            color: #fffdf7;
+            background: var(--cta);
+            color: #fff;
         }
 
         .btn-secondary {
-            border: 1px solid rgba(16, 42, 47, 0.18);
-            color: var(--bg-deep);
-            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid var(--border);
+            color: var(--text-bright);
+            background: var(--surface-2);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-line);
         }
 
         .stats {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 0.8rem;
-            padding: 0 1.6rem 2rem;
+            gap: 0.55rem;
+            padding: 0 1.6rem 1.6rem;
         }
 
         .stat {
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(16, 42, 47, 0.08);
-            border-radius: 13px;
-            padding: 0.9rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.85rem 0.9rem;
+            transition: border-color 200ms ease;
             transform: translateY(12px);
             opacity: 0;
             animation: rise 540ms ease forwards;
         }
 
-        .stat:nth-child(2) { animation-delay: 80ms; }
-        .stat:nth-child(3) { animation-delay: 140ms; }
-        .stat:nth-child(4) { animation-delay: 190ms; }
+        .stat:nth-child(2) { animation-delay: 60ms; }
+        .stat:nth-child(3) { animation-delay: 120ms; }
+        .stat:nth-child(4) { animation-delay: 180ms; }
+
+        .stat:hover {
+            border-color: var(--accent-line);
+        }
 
         .stat strong {
             display: block;
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 1.38rem;
-            color: var(--bg-deep);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 1.35rem;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: -0.02em;
         }
 
         .stat span {
-            color: var(--ink-soft);
-            font-size: 0.84rem;
+            color: var(--text-dim);
+            font-size: 0.8rem;
         }
 
         .sections {
-            padding: 0 1.6rem 2rem;
+            padding: 0 1.6rem 1.4rem;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.9rem;
+            gap: 0.55rem;
         }
 
         .panel {
-            background: rgba(255, 255, 255, 0.58);
-            border: 1px solid rgba(16, 42, 47, 0.09);
-            border-radius: 16px;
-            padding: 1.05rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.1rem;
+            transition: border-color 200ms ease;
+        }
+
+        .panel:hover {
+            border-color: var(--accent-line);
         }
 
         .panel h2 {
-            font-size: 1.2rem;
-            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+            margin-bottom: 0.7rem;
+            letter-spacing: -0.01em;
         }
 
         .panel p {
-            color: var(--ink-soft);
-            font-size: 0.95rem;
-            margin-bottom: 0.8rem;
+            color: var(--text);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.55;
         }
 
         .list {
             list-style: none;
             display: grid;
-            gap: 0.52rem;
+            gap: 0.45rem;
         }
 
         .list li {
-            font-size: 0.91rem;
-            color: var(--ink-soft);
-            padding-left: 1.1rem;
+            font-size: 0.86rem;
+            color: var(--text-dim);
+            padding-left: 1rem;
             position: relative;
+            line-height: 1.45;
         }
 
         .list li::before {
             content: "";
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 2px;
-            background: linear-gradient(130deg, var(--accent-2), var(--accent));
+            width: 4px;
+            height: 4px;
+            border-radius: 1px;
+            background: var(--accent);
             position: absolute;
             left: 0;
-            top: 0.4rem;
+            top: 0.42rem;
         }
 
         .band {
-            margin: 0 1.6rem 2rem;
-            border-radius: 16px;
-            padding: 1rem;
-            border: 1px solid rgba(16, 42, 47, 0.12);
-            background: linear-gradient(110deg, #10323a, #173f45);
-            color: #d8ebe4;
+            margin: 0 1.6rem 1.4rem;
+            border-radius: 8px;
+            padding: 1.1rem 1.3rem;
+            border: 1px solid var(--accent-line);
+            background: linear-gradient(110deg, var(--surface-2), var(--surface-3));
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 1rem;
@@ -286,90 +340,57 @@
         }
 
         .band h3 {
-            color: #f8f1df;
-            font-size: 1.2rem;
-            margin-bottom: 0.35rem;
+            color: var(--text-bright);
+            font-size: 1.05rem;
+            margin-bottom: 0.25rem;
         }
 
         .band p {
-            color: #b5d8cf;
-            font-size: 0.92rem;
+            color: var(--text-dim);
+            font-size: 0.86rem;
+            line-height: 1.5;
         }
 
         .foot {
-            border-top: 1px solid var(--line);
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
             flex-wrap: wrap;
-            padding: 1.2rem 1.6rem 1.5rem;
-            color: var(--ink-soft);
-            font-size: 0.82rem;
-            background: rgba(255, 255, 255, 0.35);
+            padding: 1rem 1.6rem;
+            color: var(--text-dim);
+            font-size: 0.78rem;
+            background: rgba(13, 18, 25, 0.6);
         }
 
         .foot a {
-            color: var(--bg-deep);
+            color: var(--text);
             font-weight: 600;
             text-decoration: none;
         }
 
-        @keyframes rise {
-            from {
-                transform: translateY(12px);
-                opacity: 0;
-            }
+        .foot a:hover {
+            color: var(--accent);
+        }
 
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        @keyframes rise {
+            from { transform: translateY(12px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         @media (max-width: 900px) {
-            .hero {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .sections {
-                grid-template-columns: 1fr;
-            }
-
-            .band {
-                grid-template-columns: 1fr;
-            }
+            .hero { grid-template-columns: 1fr; gap: 1.2rem; }
+            .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .sections { grid-template-columns: 1fr; }
+            .band { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 560px) {
-            .wrapper {
-                width: min(1100px, calc(100% - 1rem));
-                margin-top: 0.5rem;
-                border-radius: 18px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .topbar,
-            .hero,
-            .stats,
-            .sections,
-            .band,
-            .foot {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-
-            .stats {
-                grid-template-columns: 1fr;
-            }
+            .wrapper { width: min(1100px, calc(100% - 0.8rem)); margin-top: 0.4rem; border-radius: 10px; }
+            h1 { font-size: 1.8rem; }
+            .topbar, .hero, .stats, .sections, .band, .foot { padding-left: 1rem; padding-right: 1rem; }
+            .stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -378,25 +399,24 @@
     <main class="wrapper">
         <header class="topbar">
             <div class="brand">
-                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Nascent Poly logo">
-                    <!-- Nascent transcript (wavy tail) -->
-                    <path d="M6 34 Q12 22 20 30 Q28 38 34 30" stroke="#11a38a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-                    <!-- Polymerase (pacman body) -->
-                    <path d="M34 32 L52 18 A22 22 0 1 0 52 46 Z" fill="#f06b28"/>
-                    <!-- Eye -->
-                    <circle cx="44" cy="28" r="2.5" fill="#f2efe8"/>
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Nascent Poly">
+                    <rect x="2" y="18" width="20" height="3.5" rx="1.5" fill="currentColor" opacity="0.3"/>
+                    <rect x="2" y="30" width="26" height="3.5" rx="1.5" fill="currentColor" opacity="0.55"/>
+                    <rect x="2" y="42" width="16" height="3.5" rx="1.5" fill="currentColor" opacity="0.3"/>
+                    <polygon points="26,14 40,14 62,32 40,50 26,50" fill="currentColor"/>
                 </svg>
                 Nascent Poly
             </div>
-            <div class="status">Offline-first, readiness program underway</div>
+            <div class="status">offline-first · deterministic</div>
         </header>
 
         <section class="hero">
             <div class="hero-main">
-                <h1>A natural-language interpreter built for regulated environments.</h1>
+                <h1>Natural-language interpreter for regulated operations.</h1>
                 <p>
-                    Nascent Poly translates plain-English instructions into precise system actions with deterministic behavior, local execution,
-                    and audit-oriented workflows. Designed for pharma and manufacturing teams operating under strict procedural controls.
+                    Translates plain-English instructions into precise system actions.
+                    Deterministic behavior. Local execution. Audit-ready workflows.
+                    Built for pharma and manufacturing teams under strict procedural control.
                 </p>
                 <div class="cta-row">
                     <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Launchpad</a>
@@ -405,33 +425,33 @@
             </div>
 
             <aside class="hero-shell" aria-label="Launchpad command preview">
-                <div class="shell-row"><span>&gt;</span>run my tests</div>
-                <div class="shell-row">Action: Test: Run All Tests</div>
-                <div class="shell-row"><span>&gt;</span>commit changes</div>
-                <div class="shell-row">Action: Git: Commit</div>
-                <div class="shell-row"><span>&gt;</span>open terminal</div>
-                <div class="shell-row">Action: Toggle Terminal</div>
+                <div class="shell-row"><span>&gt;</span> run my tests</div>
+                <div class="shell-row shell-response">Test: Run All Tests</div>
+                <div class="shell-row"><span>&gt;</span> commit changes</div>
+                <div class="shell-row shell-response">Git: Commit</div>
+                <div class="shell-row"><span>&gt;</span> open terminal</div>
+                <div class="shell-row shell-response">Terminal: Toggle Terminal</div>
             </aside>
         </section>
 
-        <section class="stats" aria-label="Performance and trust stats">
-            <article class="stat"><strong>123</strong><span>Command intents in Launchpad</span></article>
-            <article class="stat"><strong>&lt;3ms</strong><span>Typical routing latency</span></article>
-            <article class="stat"><strong>0</strong><span>Telemetry and API calls required</span></article>
-            <article class="stat"><strong>Deterministic</strong><span>Repeatable outcomes for controlled workflows</span></article>
+        <section class="stats" aria-label="Platform metrics">
+            <article class="stat"><strong>195</strong><span>Command intents mapped</span></article>
+            <article class="stat"><strong>&lt;3ms</strong><span>Routing latency</span></article>
+            <article class="stat"><strong>98%</strong><span>VS Code action coverage</span></article>
+            <article class="stat"><strong>0</strong><span>External API calls</span></article>
         </section>
 
         <section class="sections">
             <article class="panel">
                 <h2>Interpreter Foundations</h2>
                 <p>
-                    The platform is designed for high-consequence operations where explainability, traceability,
-                    and procedural consistency matter.
+                    Designed for high-consequence operations where explainability, traceability,
+                    and procedural consistency are requirements — not options.
                 </p>
                 <ul class="list">
-                    <li>Deterministic interpretation for repeated commands across shifts and sites</li>
+                    <li>Deterministic interpretation — same input, same output, every time</li>
                     <li>Reviewable decision traces for QA, CAPA, and internal governance</li>
-                    <li>Offline operation for controlled networks and restricted environments</li>
+                    <li>Offline operation for controlled networks and air-gapped environments</li>
                     <li>Configurable vocabulary for domain terms, SOP language, and operator phrasing</li>
                 </ul>
             </article>
@@ -439,38 +459,39 @@
             <article class="panel">
                 <h2>From Seed Product to Platform</h2>
                 <p>
-                    Launchpad is the first public surface: a lightweight VS Code experience that demonstrates
-                    interpreter speed, reliability, and natural-language control in daily workflows.
+                    Launchpad is the first public surface — a VS Code extension that demonstrates
+                    interpreter speed, reliability, and natural-language control.
                 </p>
                 <ul class="list">
                     <li>Natural-language routing for files, Git, tests, and debugging</li>
                     <li>Trace mode for controlled validation and acceptance testing</li>
-                    <li>No dependency on external inference infrastructure</li>
-                    <li>Production roadmap focused on pharma and manufacturing operations</li>
+                    <li>Zero dependency on external inference infrastructure</li>
+                    <li>Production roadmap targeting pharma and manufacturing operations</li>
                 </ul>
             </article>
         </section>
 
         <section class="sections" aria-label="Compliance posture">
             <article class="panel" style="grid-column: 1 / -1;">
-                <h2>Current Compliance Posture</h2>
+                <h2>Compliance Posture</h2>
                 <p>
-                    We do not currently claim 21 CFR Part 11 compliance. Our focus today is practical readiness: deterministic behavior,
-                    offline operation, and audit-oriented workflows, with a dated Part 11 readiness program in progress.
+                    We do not currently claim 21 CFR Part 11 compliance. Current focus: practical readiness —
+                    deterministic behavior, offline operation, audit-oriented workflows. Dated Part 11 readiness program in progress.
                 </p>
                 <ul class="list">
-                    <li>Safe claim today: built for regulated environments</li>
-                    <li>Safe claim today: offline, deterministic, audit-oriented workflow support</li>
-                    <li>Not claimed today: full 21 CFR Part 11 compliance certification</li>
+                    <li>Claimed: built for regulated environments</li>
+                    <li>Claimed: offline, deterministic, audit-oriented workflow support</li>
+                    <li>Not claimed: full 21 CFR Part 11 compliance certification</li>
                 </ul>
             </article>
         </section>
 
         <section class="band">
             <div>
-                <h3>Now onboarding pilot partners in regulated industries.</h3>
+                <h3>Onboarding pilot partners in regulated industries.</h3>
                 <p>
-                    We are extending the interpreter from developer workflows into production-facing command surfaces for labs, quality systems, and manufacturing operations.
+                    Extending the interpreter from developer workflows into production-facing command surfaces
+                    for labs, quality systems, and manufacturing operations.
                 </p>
             </div>
             <a class="btn btn-primary" href="mailto:hello@nascentpoly.com">Contact Nascent Poly</a>
@@ -478,16 +499,18 @@
 
         <footer class="foot">
             <span>
-                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;vertical-align:-3px;margin-right:4px">
-                    <path d="M6 34 Q12 22 20 30 Q28 38 34 30" stroke="#11a38a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-                    <path d="M34 32 L52 18 A22 22 0 1 0 52 46 Z" fill="#f06b28"/>
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:15px;height:15px;vertical-align:-2px;margin-right:3px;color:var(--accent)">
+                    <rect x="2" y="18" width="20" height="3.5" rx="1.5" fill="currentColor" opacity="0.3"/>
+                    <rect x="2" y="30" width="26" height="3.5" rx="1.5" fill="currentColor" opacity="0.55"/>
+                    <rect x="2" y="42" width="16" height="3.5" rx="1.5" fill="currentColor" opacity="0.3"/>
+                    <polygon points="26,14 40,14 62,32 40,50 26,50" fill="currentColor"/>
                 </svg>
-                &copy; 2026 Nascent Poly. Natural-language control for regulated workflows.
+                &copy; 2026 Nascent Poly
             </span>
             <span>
                 <a href="https://www.nascentpoly.com/">nascentpoly.com</a>
-                |
-                <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">VS Code Marketplace</a>
+                &middot;
+                <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
             </span>
         </footer>
     </main>
