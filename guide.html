@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launchpad User Guide | Nascent Poly</title>
+    <meta name="description" content="Complete user guide for Launchpad — the natural-language command palette for VS Code. 195 intents, offline, deterministic.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M12 52V12l20 40V12' stroke='%2300d4aa' stroke-width='5' fill='none' stroke-linecap='square' stroke-linejoin='miter'/%3E%3Cpath d='M40 52V12h12a10 10 0 0 1 0 20H40' stroke='%2300d4aa' stroke-width='5' fill='none' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080c14;
+            --surface: #0d1219;
+            --surface-2: #141c28;
+            --surface-3: #1a2436;
+            --accent: #00d4aa;
+            --accent-dim: rgba(0, 212, 170, 0.07);
+            --accent-line: rgba(0, 212, 170, 0.18);
+            --cta: #f06b28;
+            --text: #b8c8d8;
+            --text-dim: #556878;
+            --text-bright: #e2ecf4;
+            --border: #1a2535;
+            --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .backdrop {
+            position: fixed; inset: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0, 212, 170, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 170, 0.025) 1px, transparent 1px);
+            background-size: 32px 32px; opacity: 0.7; z-index: 0;
+        }
+
+        .wrapper {
+            width: min(1100px, calc(100% - 2rem));
+            margin: 1.5rem auto 2.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative; z-index: 1;
+        }
+
+        .wrapper::before {
+            content: ""; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.35;
+        }
+
+        .topbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.85rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(13, 18, 25, 0.85);
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.9rem; letter-spacing: 0.12em;
+            text-transform: uppercase; font-weight: 700;
+            color: var(--text-bright);
+            display: flex; align-items: center; gap: 0.55rem;
+            text-decoration: none;
+        }
+
+        .brand svg { width: 28px; height: 28px; flex-shrink: 0; color: var(--accent); }
+
+        .nav-links {
+            display: flex; gap: 1.2rem; align-items: center;
+        }
+
+        .nav-links a {
+            font-size: 0.82rem; color: var(--text-dim);
+            text-decoration: none; transition: color 150ms;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        .nav-links a.active { color: var(--accent); }
+
+        h1, h2, h3, h4 {
+            font-family: "Space Grotesk", sans-serif;
+            line-height: 1.15;
+            color: var(--text-bright);
+        }
+
+        /* Hero */
+        .guide-hero {
+            padding: 2.8rem 1.6rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .guide-hero h1 {
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            letter-spacing: -0.03em;
+            margin-bottom: 0.6rem;
+        }
+
+        .guide-hero p {
+            max-width: 64ch; font-size: 0.95rem; line-height: 1.65;
+        }
+
+        .version-badge {
+            display: inline-block;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.72rem; color: var(--accent);
+            border: 1px solid var(--accent-line);
+            border-radius: 3px; padding: 0.2rem 0.5rem;
+            background: var(--accent-dim); margin-left: 0.6rem;
+            vertical-align: middle;
+        }
+
+        /* Layout */
+        .guide-body {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            min-height: 60vh;
+        }
+
+        /* Sidebar TOC */
+        .toc {
+            border-right: 1px solid var(--border);
+            padding: 1.2rem 0;
+            position: sticky; top: 0; align-self: start;
+            max-height: 100vh; overflow-y: auto;
+        }
+
+        .toc a {
+            display: block;
+            padding: 0.35rem 1rem;
+            font-size: 0.78rem; color: var(--text-dim);
+            text-decoration: none; transition: color 150ms, background 150ms;
+            border-left: 2px solid transparent;
+        }
+
+        .toc a:hover, .toc a.active {
+            color: var(--text-bright);
+            border-left-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .toc .toc-head {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.68rem; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--text-dim);
+            padding: 0.6rem 1rem 0.25rem;
+            font-weight: 700;
+        }
+
+        .toc .toc-head:first-child { padding-top: 0; }
+
+        /* Content */
+        .content {
+            padding: 1.6rem 1.8rem 2.5rem;
+        }
+
+        .content section { margin-bottom: 2.4rem; }
+
+        .content h2 {
+            font-size: 1.25rem; margin-bottom: 0.7rem;
+            padding-bottom: 0.45rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .content h3 {
+            font-size: 1rem; margin: 1.3rem 0 0.5rem;
+            color: var(--accent);
+        }
+
+        .content p, .content li {
+            font-size: 0.9rem; line-height: 1.65; margin-bottom: 0.5rem;
+        }
+
+        .content ul { padding-left: 1.2rem; margin-bottom: 0.8rem; }
+
+        .content code {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.82rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 0.15rem 0.4rem;
+            color: var(--accent);
+        }
+
+        .content pre {
+            background: #060a10;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.9rem 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .content pre code {
+            background: none; border: none; padding: 0;
+            font-size: 0.8rem; line-height: 1.55; color: #5ea88e;
+        }
+
+        /* Keyboard shortcut callout */
+        kbd {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.78rem;
+            background: var(--surface-3);
+            border: 1px solid var(--border);
+            border-bottom-width: 2px;
+            border-radius: 4px;
+            padding: 0.15rem 0.45rem;
+            color: var(--text-bright);
+            white-space: nowrap;
+        }
+
+        /* Command reference table */
+        .cmd-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.2rem;
+            font-size: 0.84rem;
+        }
+
+        .cmd-table th {
+            text-align: left;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+            padding: 0.5rem 0.7rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
+        }
+
+        .cmd-table td {
+            padding: 0.45rem 0.7rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .cmd-table tr:hover td {
+            background: var(--accent-dim);
+        }
+
+        .cmd-table .phrase {
+            color: var(--accent);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.8rem;
+        }
+
+        .cmd-table .desc { color: var(--text); }
+        .cmd-table .vsc { color: var(--text-dim); font-size: 0.78rem; }
+
+        .category-header {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-bright);
+            margin: 1.5rem 0 0.6rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--accent-line);
+        }
+
+        .category-header:first-of-type { margin-top: 0.5rem; }
+
+        /* Callout box */
+        .callout {
+            background: var(--surface-2);
+            border: 1px solid var(--accent-line);
+            border-radius: 6px;
+            padding: 0.9rem 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .callout strong {
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+
+        .callout p {
+            margin-bottom: 0.2rem;
+        }
+
+        /* Footer */
+        .foot {
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between;
+            align-items: center; gap: 1rem; flex-wrap: wrap;
+            padding: 1rem 1.6rem;
+            color: var(--text-dim); font-size: 0.78rem;
+            background: rgba(13, 18, 25, 0.6);
+        }
+
+        .foot a {
+            color: var(--text); font-weight: 600; text-decoration: none;
+        }
+
+        .foot a:hover { color: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .guide-body { grid-template-columns: 1fr; }
+            .toc { display: none; }
+            .content { padding: 1.2rem 1rem 2rem; }
+            .cmd-table .vsc { display: none; }
+        }
+
+        @media (max-width: 560px) {
+            .wrapper { width: min(1100px, calc(100% - 0.8rem)); margin-top: 0.4rem; border-radius: 10px; }
+            .guide-hero, .content { padding-left: 1rem; padding-right: 1rem; }
+        }
+
+        /* Search filter */
+        .search-box {
+            margin-bottom: 1rem;
+        }
+
+        .search-box input {
+            width: 100%; max-width: 400px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 0.55rem 0.8rem;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.84rem;
+            color: var(--text-bright);
+            outline: none;
+            transition: border-color 150ms;
+        }
+
+        .search-box input::placeholder { color: var(--text-dim); }
+
+        .search-box input:focus { border-color: var(--accent); }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="backdrop" aria-hidden="true"></div>
+    <main class="wrapper">
+        <header class="topbar">
+            <a class="brand" href="index.html">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Nascent Poly">
+                    <path d="M12 52V12l20 40V12" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+                    <path d="M40 52V12h12a10 10 0 0 1 0 20H40" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+                </svg>
+                Nascent Poly
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="guide.html" class="active">User Guide</a>
+                <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install</a>
+            </nav>
+        </header>
+
+        <section class="guide-hero">
+            <h1>Launchpad User Guide <span class="version-badge">v1.0.2</span></h1>
+            <p>
+                Type what you want in plain English. Launchpad classifies your intent and runs the
+                right VS Code command. 195 intents, sub-3ms, fully offline.
+            </p>
+        </section>
+
+        <div class="guide-body">
+            <!-- Sidebar TOC -->
+            <nav class="toc" aria-label="Table of contents">
+                <div class="toc-head">Getting Started</div>
+                <a href="#installation">Installation</a>
+                <a href="#quick-start">Quick Start</a>
+                <a href="#how-it-works">How It Works</a>
+                <div class="toc-head">Features</div>
+                <a href="#compound-commands">Compound Commands</a>
+                <a href="#macros">Macros</a>
+                <a href="#custom-commands">Custom Commands</a>
+                <a href="#trace-mode">Trace Mode</a>
+                <a href="#usage-stats">Usage Stats</a>
+                <div class="toc-head">Command Reference</div>
+                <a href="#file-ops">File Operations</a>
+                <a href="#version-control">Version Control</a>
+                <a href="#code-quality">Code Quality</a>
+                <a href="#testing-debugging">Testing &amp; Debugging</a>
+                <a href="#build-deploy">Build &amp; Deploy</a>
+                <a href="#search-generate">Search &amp; Generate</a>
+                <a href="#navigation">Navigation</a>
+                <a href="#editor-actions">Editor Actions</a>
+                <a href="#editing">Editing</a>
+                <a href="#workspace-settings">Workspace &amp; Settings</a>
+                <a href="#multi-cursor">Multi-Cursor</a>
+                <a href="#tab-management">Tab Management</a>
+                <a href="#debug-controls">Debug Controls</a>
+                <a href="#git-extended">Git (Extended)</a>
+                <a href="#editor-extended">Editor (Extended)</a>
+                <a href="#layout-focus">Layout &amp; Focus</a>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="content">
+
+                <!-- Installation -->
+                <section id="installation">
+                    <h2>Installation</h2>
+                    <ol>
+                        <li>Open VS Code</li>
+                        <li>Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> to open Extensions</li>
+                        <li>Search for <strong>Launchpad</strong> by Nascent Poly</li>
+                        <li>Click <strong>Install</strong></li>
+                    </ol>
+                    <p>
+                        Alternatively, install from the
+                        <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette" style="color:var(--accent)">VS Code Marketplace</a>.
+                    </p>
+                </section>
+
+                <!-- Quick Start -->
+                <section id="quick-start">
+                    <h2>Quick Start</h2>
+                    <div class="callout">
+                        <strong>Keyboard Shortcut</strong>
+                        <p>Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>.</kbd> (Mac: <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>.</kbd>) to open the Launchpad input box.</p>
+                    </div>
+                    <p>Type what you want in natural language:</p>
+                    <pre><code>&gt; run my tests
+  Test: Run All Tests  (98%)
+
+&gt; commit changes
+  Git: Commit  (95%)
+
+&gt; format and save
+  Format Document → Save File  (92%, 89%)
+
+&gt; toggle dark mode
+  Change Color Theme  (87%)</code></pre>
+                    <p>
+                        Launchpad understands natural phrasing, handles typos (via trigram fuzzy
+                        correction), and classifies compound commands separated by "and", "then", or
+                        "next".
+                    </p>
+                    <p>You can also run <strong>Launchpad: Run Command</strong> or <strong>Launchpad: Run Command (with trace)</strong> from the VS Code Command Palette (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>).</p>
+                </section>
+
+                <!-- How It Works -->
+                <section id="how-it-works">
+                    <h2>How It Works</h2>
+                    <p>
+                        Launchpad uses a deterministic classification engine &mdash; no AI APIs, no cloud,
+                        no network calls. Your input is processed entirely on your machine in under 3ms.
+                    </p>
+                    <ul>
+                        <li><strong>Same input = same output</strong>, every time. Fully deterministic.</li>
+                        <li><strong>Trigram fuzzy correction</strong> handles typos and misspellings.</li>
+                        <li><strong>Synonym expansion</strong> maps informal phrases to known vocabulary.</li>
+                        <li><strong>Compound commands</strong> split "format and save" into sequential actions.</li>
+                        <li><strong>Confidence scoring</strong> shows how certain the classification is.</li>
+                    </ul>
+                </section>
+
+                <!-- Compound Commands -->
+                <section id="compound-commands">
+                    <h2>Compound Commands</h2>
+                    <p>
+                        Launchpad can split multi-part requests at conjunctions like
+                        <code>and</code>, <code>then</code>, <code>next</code>, <code>also</code>,
+                        and <code>plus</code>, classifying each fragment independently and executing
+                        them in sequence.
+                    </p>
+                    <pre><code>&gt; format and save
+  1. Format Document
+  2. Save File
+
+&gt; save then close
+  1. Save File
+  2. Close Editor
+
+&gt; stage all and commit
+  1. Stage All Changes
+  2. Git: Commit</code></pre>
+                    <div class="callout">
+                        <strong>Note:</strong>
+                        <p>Phrases like "find and replace" are recognized as single commands &mdash; they won't be split.</p>
+                    </div>
+                </section>
+
+                <!-- Macros -->
+                <section id="macros">
+                    <h2>Macros</h2>
+                    <p>
+                        Define named macros in your VS Code settings to execute a sequence of
+                        commands with a single phrase.
+                    </p>
+                    <h3>Configuration</h3>
+                    <p>Open Settings JSON (<kbd>Ctrl</kbd>+<kbd>,</kbd> &rarr; search "launchpad") and add:</p>
+                    <pre><code>"launchpad.macros": {
+    "deploy": [
+        "editor.action.formatDocument",
+        "workbench.action.files.save",
+        "workbench.action.terminal.toggleTerminal"
+    ],
+    "cleanup": [
+        "editor.action.trimTrailingWhitespace",
+        "editor.action.organizeImports",
+        "editor.action.formatDocument",
+        "workbench.action.files.save"
+    ],
+    "review": [
+        "workbench.view.scm",
+        "git.openAllChanges"
+    ]
+}</code></pre>
+                    <h3>Usage</h3>
+                    <p>
+                        Open Launchpad and type the macro name exactly:
+                    </p>
+                    <pre><code>&gt; deploy
+  Macro: deploy  (runs 3 commands in sequence)
+
+&gt; cleanup
+  Macro: cleanup  (runs 4 commands in sequence)</code></pre>
+                    <p>Macros are checked before classification &mdash; if a macro name matches your input, it runs immediately without going through the engine.</p>
+                </section>
+
+                <!-- Custom Commands -->
+                <section id="custom-commands">
+                    <h2>Custom Commands</h2>
+                    <p>
+                        Map custom phrases directly to VS Code commands. Useful for extension-specific
+                        commands that Launchpad doesn't know about by default.
+                    </p>
+                    <pre><code>"launchpad.customCommands": {
+    "deploy to staging": "myExtension.deployStagingCommand",
+    "run eslint fix": "eslint.executeAutofix",
+    "open database": "sqltools.openConnection"
+}</code></pre>
+                    <p>
+                        Custom commands are checked before the classification engine. Type the
+                        exact phrase and Launchpad will execute the mapped command directly.
+                    </p>
+                </section>
+
+                <!-- Trace Mode -->
+                <section id="trace-mode">
+                    <h2>Trace Mode</h2>
+                    <p>
+                        Run <strong>Launchpad: Run Command (with trace)</strong> from the Command Palette
+                        to see a ranked list of classification results. Pick the one you want.
+                    </p>
+                    <pre><code>&gt; close everything
+
+  [1] Close All Editors          94%
+  [2] Close Window               81%
+  [3] Close All Terminals        78%
+  [4] Close Folder               65%</code></pre>
+                    <p>
+                        Trace mode is useful for ambiguous phrases or when you want to see what
+                        Launchpad considered before choosing.
+                    </p>
+                </section>
+
+                <!-- Usage Stats -->
+                <section id="usage-stats">
+                    <h2>Usage Stats</h2>
+                    <p>
+                        Launchpad records which commands you use (intent + confidence only &mdash; no raw
+                        input stored). View your stats with the <strong>Launchpad: Show Usage Stats</strong>
+                        command from the Command Palette.
+                    </p>
+                    <p>All data is stored locally and never transmitted.</p>
+                </section>
+
+                <!-- COMMAND REFERENCE -->
+                <section id="command-reference">
+                    <h2>Command Reference</h2>
+                    <p>All 195 intents Launchpad recognizes, organized by category. The <strong>Example phrases</strong> column shows what you can type &mdash; natural variations, typos, and synonyms are also accepted.</p>
+
+                    <div class="search-box">
+                        <input type="text" id="cmdSearch" placeholder="Filter commands..." aria-label="Filter commands">
+                    </div>
+
+                    <!-- File Operations -->
+                    <h3 class="category-header" id="file-ops">File Operations</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"create a file", "new file"</td><td class="desc">New Untitled File</td><td class="vsc">workbench.action.files.newUntitledFile</td></tr>
+                            <tr><td class="phrase">"delete this file", "remove file"</td><td class="desc">Move File to Trash</td><td class="vsc">moveFileToTrash</td></tr>
+                            <tr><td class="phrase">"rename file", "move file"</td><td class="desc">Rename File</td><td class="vsc">workbench.files.action.showActiveFileInExplorer</td></tr>
+                            <tr><td class="phrase">"open file", "go to file"</td><td class="desc">Quick Open File</td><td class="vsc">workbench.action.quickOpen</td></tr>
+                            <tr><td class="phrase">"open recent"</td><td class="desc">Open Recent</td><td class="vsc">workbench.action.openRecent</td></tr>
+                            <tr><td class="phrase">"create folder", "new directory"</td><td class="desc">New Folder</td><td class="vsc">explorer.newFolder</td></tr>
+                            <tr><td class="phrase">"open folder", "open workspace"</td><td class="desc">Open Folder</td><td class="vsc">workbench.action.files.openFolder</td></tr>
+                            <tr><td class="phrase">"close folder"</td><td class="desc">Close Folder</td><td class="vsc">workbench.action.closeFolder</td></tr>
+                            <tr><td class="phrase">"compare files", "diff two files"</td><td class="desc">Compare File With&hellip;</td><td class="vsc">workbench.files.action.compareFileWith</td></tr>
+                            <tr><td class="phrase">"save", "save file"</td><td class="desc">Save File</td><td class="vsc">workbench.action.files.save</td></tr>
+                            <tr><td class="phrase">"save all", "save everything"</td><td class="desc">Save All Files</td><td class="vsc">workbench.action.files.saveAll</td></tr>
+                            <tr><td class="phrase">"save as"</td><td class="desc">Save As&hellip;</td><td class="vsc">workbench.action.files.saveAs</td></tr>
+                            <tr><td class="phrase">"copy path", "copy file path"</td><td class="desc">Copy File Path</td><td class="vsc">copyFilePath</td></tr>
+                            <tr><td class="phrase">"copy relative path"</td><td class="desc">Copy Relative Path</td><td class="vsc">copyRelativeFilePath</td></tr>
+                            <tr><td class="phrase">"reveal in explorer", "show in finder"</td><td class="desc">Reveal in File Explorer</td><td class="vsc">revealFileInOS</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Version Control -->
+                    <h3 class="category-header" id="version-control">Version Control</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"commit", "commit changes", "check in"</td><td class="desc">Git: Commit</td><td class="vsc">git.commit</td></tr>
+                            <tr><td class="phrase">"push", "push changes"</td><td class="desc">Git: Push</td><td class="vsc">git.push</td></tr>
+                            <tr><td class="phrase">"pull", "pull latest"</td><td class="desc">Git: Pull</td><td class="vsc">git.pull</td></tr>
+                            <tr><td class="phrase">"create branch", "new branch"</td><td class="desc">Git: Create Branch</td><td class="vsc">git.branch</td></tr>
+                            <tr><td class="phrase">"merge branch"</td><td class="desc">Git: Merge Branch</td><td class="vsc">git.merge</td></tr>
+                            <tr><td class="phrase">"show diff", "review changes"</td><td class="desc">Git: View Changes</td><td class="vsc">git.openChange</td></tr>
+                            <tr><td class="phrase">"undo commit", "rollback", "revert"</td><td class="desc">Git: Undo Last Commit</td><td class="vsc">git.undoCommit</td></tr>
+                            <tr><td class="phrase">"git status", "check status"</td><td class="desc">Open Source Control</td><td class="vsc">workbench.view.scm</td></tr>
+                            <tr><td class="phrase">"stash", "stash changes"</td><td class="desc">Git: Stash</td><td class="vsc">git.stash</td></tr>
+                            <tr><td class="phrase">"cherry pick"</td><td class="desc">Git: Cherry Pick</td><td class="vsc">git.cherryPick</td></tr>
+                            <tr><td class="phrase">"rebase"</td><td class="desc">Git: Rebase</td><td class="vsc">git.rebase</td></tr>
+                            <tr><td class="phrase">"git log", "view history"</td><td class="desc">Git: View History</td><td class="vsc">git.viewHistory</td></tr>
+                            <tr><td class="phrase">"resolve conflict"</td><td class="desc">Resolve Merge Conflict</td><td class="vsc">merge-conflict.accept.selection</td></tr>
+                            <tr><td class="phrase">"create PR", "pull request"</td><td class="desc">Create Pull Request</td><td class="vsc">pr.create</td></tr>
+                            <tr><td class="phrase">"switch branch", "checkout"</td><td class="desc">Git: Checkout</td><td class="vsc">git.checkout</td></tr>
+                            <tr><td class="phrase">"delete branch"</td><td class="desc">Git: Delete Branch</td><td class="vsc">git.deleteBranch</td></tr>
+                            <tr><td class="phrase">"clone", "clone repository"</td><td class="desc">Git: Clone</td><td class="vsc">git.clone</td></tr>
+                            <tr><td class="phrase">"blame", "git blame"</td><td class="desc">Git: Blame</td><td class="vsc">git.blame</td></tr>
+                            <tr><td class="phrase">"tag", "create tag"</td><td class="desc">Git: Create Tag</td><td class="vsc">git.createTag</td></tr>
+                            <tr><td class="phrase">"stage all"</td><td class="desc">Git: Stage All</td><td class="vsc">git.stageAll</td></tr>
+                            <tr><td class="phrase">"unstage all"</td><td class="desc">Git: Unstage All</td><td class="vsc">git.unstageAll</td></tr>
+                            <tr><td class="phrase">"fetch", "git fetch"</td><td class="desc">Git: Fetch</td><td class="vsc">git.fetch</td></tr>
+                            <tr><td class="phrase">"discard changes"</td><td class="desc">Git: Discard Changes</td><td class="vsc">git.clean</td></tr>
+                            <tr><td class="phrase">"stage file", "stage this"</td><td class="desc">Git: Stage File</td><td class="vsc">git.stage</td></tr>
+                            <tr><td class="phrase">"unstage file"</td><td class="desc">Git: Unstage File</td><td class="vsc">git.unstage</td></tr>
+                            <tr><td class="phrase">"pop stash", "stash pop"</td><td class="desc">Git: Pop Stash</td><td class="vsc">git.stashPop</td></tr>
+                            <tr><td class="phrase">"show staged", "diff staged"</td><td class="desc">Git: Show Staged Changes</td><td class="vsc">git.openAllChanges</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Code Quality -->
+                    <h3 class="category-header" id="code-quality">Code Quality</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"format", "format code", "prettify"</td><td class="desc">Format Document</td><td class="vsc">editor.action.formatDocument</td></tr>
+                            <tr><td class="phrase">"format selection"</td><td class="desc">Format Selection</td><td class="vsc">editor.action.formatSelection</td></tr>
+                            <tr><td class="phrase">"lint", "run linter"</td><td class="desc">Run Lint Task</td><td class="vsc">workbench.action.tasks.runTask</td></tr>
+                            <tr><td class="phrase">"refactor", "refactor code"</td><td class="desc">Refactor&hellip;</td><td class="vsc">editor.action.refactor</td></tr>
+                            <tr><td class="phrase">"type check", "run type checker"</td><td class="desc">Run Type Checker</td><td class="vsc">workbench.action.tasks.runTask</td></tr>
+                            <tr><td class="phrase">"sort imports", "organize imports"</td><td class="desc">Organize Imports</td><td class="vsc">editor.action.organizeImports</td></tr>
+                            <tr><td class="phrase">"remove dead code", "remove unused"</td><td class="desc">Source Action</td><td class="vsc">editor.action.sourceAction</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Testing & Debugging -->
+                    <h3 class="category-header" id="testing-debugging">Testing &amp; Debugging</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"run tests", "test everything"</td><td class="desc">Run All Tests</td><td class="vsc">testing.runAll</td></tr>
+                            <tr><td class="phrase">"run this test", "test at cursor"</td><td class="desc">Run Test at Cursor</td><td class="vsc">testing.runAtCursor</td></tr>
+                            <tr><td class="phrase">"debug", "start debugging"</td><td class="desc">Start Debugging</td><td class="vsc">workbench.action.debug.start</td></tr>
+                            <tr><td class="phrase">"breakpoint", "toggle breakpoint"</td><td class="desc">Toggle Breakpoint</td><td class="vsc">editor.debug.action.toggleBreakpoint</td></tr>
+                            <tr><td class="phrase">"remove breakpoints", "clear breakpoints"</td><td class="desc">Remove All Breakpoints</td><td class="vsc">workbench.debug.viewlet.action.removeAllBreakpoints</td></tr>
+                            <tr><td class="phrase">"fix error", "quick fix"</td><td class="desc">Quick Fix&hellip;</td><td class="vsc">editor.action.quickFix</td></tr>
+                            <tr><td class="phrase">"coverage", "test coverage"</td><td class="desc">Run with Coverage</td><td class="vsc">testing.coverageAll</td></tr>
+                            <tr><td class="phrase">"add test", "new test"</td><td class="desc">Add New Test</td><td class="vsc">testing.newTest</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Build & Deploy -->
+                    <h3 class="category-header" id="build-deploy">Build &amp; Deploy</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"build", "compile"</td><td class="desc">Run Build Task</td><td class="vsc">workbench.action.tasks.build</td></tr>
+                            <tr><td class="phrase">"deploy"</td><td class="desc">Run Deploy Task</td><td class="vsc">workbench.action.tasks.runTask</td></tr>
+                            <tr><td class="phrase">"install package", "add dependency"</td><td class="desc">Open Terminal</td><td class="vsc">workbench.action.terminal.new</td></tr>
+                            <tr><td class="phrase">"start server", "dev server"</td><td class="desc">Start Dev Server</td><td class="vsc">workbench.action.tasks.runTask</td></tr>
+                            <tr><td class="phrase">"stop server", "stop task"</td><td class="desc">Stop Running Task</td><td class="vsc">workbench.action.tasks.terminate</td></tr>
+                            <tr><td class="phrase">"run script", "run task"</td><td class="desc">Run Script / Task</td><td class="vsc">workbench.action.tasks.runTask</td></tr>
+                            <tr><td class="phrase">"clean build", "clean"</td><td class="desc">Clean Build</td><td class="vsc">workbench.action.tasks.runTask</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Search & Generate -->
+                    <h3 class="category-header" id="search-generate">Search &amp; Generate</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"search", "find in files", "search code"</td><td class="desc">Search in Files</td><td class="vsc">workbench.action.findInFiles</td></tr>
+                            <tr><td class="phrase">"generate code", "scaffold"</td><td class="desc">Insert Snippet</td><td class="vsc">editor.action.insertSnippet</td></tr>
+                            <tr><td class="phrase">"find references", "all references"</td><td class="desc">Find All References</td><td class="vsc">editor.action.referenceSearch.trigger</td></tr>
+                            <tr><td class="phrase">"find in file", "find here"</td><td class="desc">Find in File</td><td class="vsc">actions.find</td></tr>
+                            <tr><td class="phrase">"find and replace", "search and replace"</td><td class="desc">Find and Replace</td><td class="vsc">editor.action.startFindReplaceAction</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Navigation -->
+                    <h3 class="category-header" id="navigation">Navigation</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"go to symbol"</td><td class="desc">Go to Symbol</td><td class="vsc">workbench.action.gotoSymbol</td></tr>
+                            <tr><td class="phrase">"go to definition"</td><td class="desc">Go to Definition</td><td class="vsc">editor.action.revealDefinition</td></tr>
+                            <tr><td class="phrase">"go to implementation"</td><td class="desc">Go to Implementation</td><td class="vsc">editor.action.goToImplementation</td></tr>
+                            <tr><td class="phrase">"go to file", "quick open"</td><td class="desc">Quick Open</td><td class="vsc">workbench.action.quickOpen</td></tr>
+                            <tr><td class="phrase">"go to line"</td><td class="desc">Go to Line&hellip;</td><td class="vsc">workbench.action.gotoLine</td></tr>
+                            <tr><td class="phrase">"go to bracket", "matching bracket"</td><td class="desc">Go to Matching Bracket</td><td class="vsc">editor.action.jumpToBracket</td></tr>
+                            <tr><td class="phrase">"peek definition"</td><td class="desc">Peek Definition</td><td class="vsc">editor.action.peekDefinition</td></tr>
+                            <tr><td class="phrase">"peek references"</td><td class="desc">Peek References</td><td class="vsc">editor.action.referenceSearch.trigger</td></tr>
+                            <tr><td class="phrase">"go back", "navigate back"</td><td class="desc">Navigate Back</td><td class="vsc">workbench.action.navigateBack</td></tr>
+                            <tr><td class="phrase">"go forward", "navigate forward"</td><td class="desc">Navigate Forward</td><td class="vsc">workbench.action.navigateForward</td></tr>
+                            <tr><td class="phrase">"show hover", "hover info"</td><td class="desc">Show Hover</td><td class="vsc">editor.action.showHover</td></tr>
+                            <tr><td class="phrase">"go to type definition"</td><td class="desc">Go to Type Definition</td><td class="vsc">editor.action.goToTypeDefinition</td></tr>
+                            <tr><td class="phrase">"next error", "next problem"</td><td class="desc">Go to Next Error</td><td class="vsc">editor.action.marker.next</td></tr>
+                            <tr><td class="phrase">"previous error"</td><td class="desc">Go to Previous Error</td><td class="vsc">editor.action.marker.prev</td></tr>
+                            <tr><td class="phrase">"next change"</td><td class="desc">Go to Next Change</td><td class="vsc">workbench.action.editor.nextChange</td></tr>
+                            <tr><td class="phrase">"previous change"</td><td class="desc">Go to Previous Change</td><td class="vsc">workbench.action.editor.previousChange</td></tr>
+                            <tr><td class="phrase">"definition to the side"</td><td class="desc">Open Definition Aside</td><td class="vsc">editor.action.revealDefinitionAside</td></tr>
+                            <tr><td class="phrase">"go to symbol in workspace"</td><td class="desc">Go to Symbol in Workspace</td><td class="vsc">workbench.action.showAllSymbols</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Editor Actions -->
+                    <h3 class="category-header" id="editor-actions">Editor Actions</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"close file", "close editor"</td><td class="desc">Close Editor</td><td class="vsc">workbench.action.closeActiveEditor</td></tr>
+                            <tr><td class="phrase">"close all", "close everything"</td><td class="desc">Close All Editors</td><td class="vsc">workbench.action.closeAllEditors</td></tr>
+                            <tr><td class="phrase">"close other tabs"</td><td class="desc">Close Other Editors</td><td class="vsc">workbench.action.closeOtherEditors</td></tr>
+                            <tr><td class="phrase">"split editor", "split right"</td><td class="desc">Split Editor Right</td><td class="vsc">workbench.action.splitEditor</td></tr>
+                            <tr><td class="phrase">"split down"</td><td class="desc">Split Editor Down</td><td class="vsc">workbench.action.splitEditorDown</td></tr>
+                            <tr><td class="phrase">"toggle sidebar", "show sidebar"</td><td class="desc">Toggle Sidebar</td><td class="vsc">workbench.action.toggleSidebarVisibility</td></tr>
+                            <tr><td class="phrase">"open terminal", "toggle terminal"</td><td class="desc">Toggle Terminal</td><td class="vsc">workbench.action.terminal.toggleTerminal</td></tr>
+                            <tr><td class="phrase">"new terminal"</td><td class="desc">New Terminal</td><td class="vsc">workbench.action.terminal.new</td></tr>
+                            <tr><td class="phrase">"kill terminal"</td><td class="desc">Kill Terminal</td><td class="vsc">workbench.action.terminal.kill</td></tr>
+                            <tr><td class="phrase">"split terminal"</td><td class="desc">Split Terminal</td><td class="vsc">workbench.action.terminal.split</td></tr>
+                            <tr><td class="phrase">"clear terminal"</td><td class="desc">Clear Terminal</td><td class="vsc">workbench.action.terminal.clear</td></tr>
+                            <tr><td class="phrase">"focus editor"</td><td class="desc">Focus Editor</td><td class="vsc">workbench.action.focusActiveEditorGroup</td></tr>
+                            <tr><td class="phrase">"pin tab"</td><td class="desc">Pin Tab</td><td class="vsc">workbench.action.pinEditor</td></tr>
+                            <tr><td class="phrase">"unpin tab"</td><td class="desc">Unpin Tab</td><td class="vsc">workbench.action.unpinEditor</td></tr>
+                            <tr><td class="phrase">"markdown preview"</td><td class="desc">Markdown Preview</td><td class="vsc">markdown.showPreview</td></tr>
+                            <tr><td class="phrase">"show output", "toggle output"</td><td class="desc">Toggle Output Panel</td><td class="vsc">workbench.action.output.toggleOutput</td></tr>
+                            <tr><td class="phrase">"reload window"</td><td class="desc">Reload Window</td><td class="vsc">workbench.action.reloadWindow</td></tr>
+                            <tr><td class="phrase">"close window"</td><td class="desc">Close Window</td><td class="vsc">workbench.action.closeWindow</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Editing -->
+                    <h3 class="category-header" id="editing">Editing</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"comment", "toggle comment"</td><td class="desc">Toggle Line Comment</td><td class="vsc">editor.action.commentLine</td></tr>
+                            <tr><td class="phrase">"block comment"</td><td class="desc">Toggle Block Comment</td><td class="vsc">editor.action.blockComment</td></tr>
+                            <tr><td class="phrase">"duplicate line"</td><td class="desc">Duplicate Line Down</td><td class="vsc">editor.action.copyLinesDownAction</td></tr>
+                            <tr><td class="phrase">"delete line"</td><td class="desc">Delete Line</td><td class="vsc">editor.action.deleteLines</td></tr>
+                            <tr><td class="phrase">"select all occurrences"</td><td class="desc">Select All Occurrences</td><td class="vsc">editor.action.selectHighlights</td></tr>
+                            <tr><td class="phrase">"select line"</td><td class="desc">Select Line</td><td class="vsc">expandLineSelection</td></tr>
+                            <tr><td class="phrase">"select all"</td><td class="desc">Select All</td><td class="vsc">editor.action.selectAll</td></tr>
+                            <tr><td class="phrase">"expand selection"</td><td class="desc">Expand Selection</td><td class="vsc">editor.action.smartSelect.expand</td></tr>
+                            <tr><td class="phrase">"shrink selection"</td><td class="desc">Shrink Selection</td><td class="vsc">editor.action.smartSelect.shrink</td></tr>
+                            <tr><td class="phrase">"select to bracket"</td><td class="desc">Select to Bracket</td><td class="vsc">editor.action.selectToBracket</td></tr>
+                            <tr><td class="phrase">"undo"</td><td class="desc">Undo</td><td class="vsc">undo</td></tr>
+                            <tr><td class="phrase">"redo"</td><td class="desc">Redo</td><td class="vsc">redo</td></tr>
+                            <tr><td class="phrase">"fold", "collapse code"</td><td class="desc">Fold Code</td><td class="vsc">editor.fold</td></tr>
+                            <tr><td class="phrase">"unfold", "expand code"</td><td class="desc">Unfold Code</td><td class="vsc">editor.unfold</td></tr>
+                            <tr><td class="phrase">"move line up"</td><td class="desc">Move Line Up</td><td class="vsc">editor.action.moveLinesUpAction</td></tr>
+                            <tr><td class="phrase">"move line down"</td><td class="desc">Move Line Down</td><td class="vsc">editor.action.moveLinesDownAction</td></tr>
+                            <tr><td class="phrase">"indent"</td><td class="desc">Indent Line</td><td class="vsc">editor.action.indentLines</td></tr>
+                            <tr><td class="phrase">"outdent", "unindent"</td><td class="desc">Outdent Line</td><td class="vsc">editor.action.outdentLines</td></tr>
+                            <tr><td class="phrase">"copy"</td><td class="desc">Copy</td><td class="vsc">editor.action.clipboardCopyAction</td></tr>
+                            <tr><td class="phrase">"cut"</td><td class="desc">Cut</td><td class="vsc">editor.action.clipboardCutAction</td></tr>
+                            <tr><td class="phrase">"paste"</td><td class="desc">Paste</td><td class="vsc">editor.action.clipboardPasteAction</td></tr>
+                            <tr><td class="phrase">"autocomplete", "trigger suggestions"</td><td class="desc">Trigger IntelliSense</td><td class="vsc">editor.action.triggerSuggest</td></tr>
+                            <tr><td class="phrase">"rename", "rename symbol"</td><td class="desc">Rename Symbol</td><td class="vsc">editor.action.rename</td></tr>
+                            <tr><td class="phrase">"uppercase", "transform case"</td><td class="desc">Transform Case</td><td class="vsc">editor.action.transformToUppercase</td></tr>
+                            <tr><td class="phrase">"sort lines"</td><td class="desc">Sort Lines</td><td class="vsc">editor.action.sortLinesAscending</td></tr>
+                            <tr><td class="phrase">"join lines"</td><td class="desc">Join Lines</td><td class="vsc">editor.action.joinLines</td></tr>
+                            <tr><td class="phrase">"insert snippet"</td><td class="desc">Insert Snippet</td><td class="vsc">editor.action.insertSnippet</td></tr>
+                            <tr><td class="phrase">"emmet expand", "expand abbreviation"</td><td class="desc">Emmet: Expand Abbreviation</td><td class="vsc">editor.emmet.action.expandAbbreviation</td></tr>
+                            <tr><td class="phrase">"trim whitespace"</td><td class="desc">Trim Trailing Whitespace</td><td class="vsc">editor.action.trimTrailingWhitespace</td></tr>
+                            <tr><td class="phrase">"transpose"</td><td class="desc">Transpose Characters</td><td class="vsc">editor.action.transpose</td></tr>
+                            <tr><td class="phrase">"reindent"</td><td class="desc">Reindent Lines</td><td class="vsc">editor.action.reindentLines</td></tr>
+                            <tr><td class="phrase">"convert to spaces"</td><td class="desc">Indentation to Spaces</td><td class="vsc">editor.action.indentationToSpaces</td></tr>
+                            <tr><td class="phrase">"convert to tabs"</td><td class="desc">Indentation to Tabs</td><td class="vsc">editor.action.indentationToTabs</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Workspace & Settings -->
+                    <h3 class="category-header" id="workspace-settings">Workspace &amp; Settings</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"settings", "open settings"</td><td class="desc">Open Settings</td><td class="vsc">workbench.action.openSettings</td></tr>
+                            <tr><td class="phrase">"settings json"</td><td class="desc">Open Settings JSON</td><td class="vsc">workbench.action.openSettingsJson</td></tr>
+                            <tr><td class="phrase">"change theme", "color theme"</td><td class="desc">Change Color Theme</td><td class="vsc">workbench.action.selectTheme</td></tr>
+                            <tr><td class="phrase">"toggle minimap"</td><td class="desc">Toggle Minimap</td><td class="vsc">editor.action.toggleMinimap</td></tr>
+                            <tr><td class="phrase">"word wrap", "toggle wrap"</td><td class="desc">Toggle Word Wrap</td><td class="vsc">editor.action.toggleWordWrap</td></tr>
+                            <tr><td class="phrase">"show whitespace"</td><td class="desc">Toggle Render Whitespace</td><td class="vsc">editor.action.toggleRenderWhitespace</td></tr>
+                            <tr><td class="phrase">"toggle line numbers"</td><td class="desc">Toggle Line Numbers</td><td class="vsc">editor.action.toggleLineNumbers</td></tr>
+                            <tr><td class="phrase">"toggle breadcrumbs"</td><td class="desc">Toggle Breadcrumbs</td><td class="vsc">breadcrumbs.toggle</td></tr>
+                            <tr><td class="phrase">"fullscreen", "full screen"</td><td class="desc">Toggle Full Screen</td><td class="vsc">workbench.action.toggleFullScreen</td></tr>
+                            <tr><td class="phrase">"zen mode"</td><td class="desc">Toggle Zen Mode</td><td class="vsc">workbench.action.toggleZenMode</td></tr>
+                            <tr><td class="phrase">"zoom in"</td><td class="desc">Zoom In</td><td class="vsc">workbench.action.zoomIn</td></tr>
+                            <tr><td class="phrase">"zoom out"</td><td class="desc">Zoom Out</td><td class="vsc">workbench.action.zoomOut</td></tr>
+                            <tr><td class="phrase">"reset zoom"</td><td class="desc">Reset Zoom</td><td class="vsc">workbench.action.zoomReset</td></tr>
+                            <tr><td class="phrase">"command palette"</td><td class="desc">Open Command Palette</td><td class="vsc">workbench.action.showCommands</td></tr>
+                            <tr><td class="phrase">"keyboard shortcuts", "keybindings"</td><td class="desc">Open Keyboard Shortcuts</td><td class="vsc">workbench.action.openGlobalKeybindings</td></tr>
+                            <tr><td class="phrase">"change language", "language mode"</td><td class="desc">Change Language Mode</td><td class="vsc">workbench.action.editor.changeLanguageMode</td></tr>
+                            <tr><td class="phrase">"new window"</td><td class="desc">New Window</td><td class="vsc">workbench.action.newWindow</td></tr>
+                            <tr><td class="phrase">"extensions", "open extensions"</td><td class="desc">Open Extensions</td><td class="vsc">workbench.view.extensions</td></tr>
+                            <tr><td class="phrase">"show problems", "problems panel"</td><td class="desc">Show Problems</td><td class="vsc">workbench.actions.view.problems</td></tr>
+                            <tr><td class="phrase">"toggle autosave", "auto save"</td><td class="desc">Toggle Auto Save</td><td class="vsc">workbench.action.toggleAutoSave</td></tr>
+                            <tr><td class="phrase">"toggle sticky scroll"</td><td class="desc">Toggle Sticky Scroll</td><td class="vsc">editor.action.toggleStickyScroll</td></tr>
+                            <tr><td class="phrase">"toggle inlay hints"</td><td class="desc">Toggle Inlay Hints</td><td class="vsc">editor.action.toggleInlayHints</td></tr>
+                            <tr><td class="phrase">"user snippets", "open snippets"</td><td class="desc">Open User Snippets</td><td class="vsc">workbench.action.openSnippets</td></tr>
+                            <tr><td class="phrase">"add folder to workspace"</td><td class="desc">Add Folder to Workspace</td><td class="vsc">workbench.action.addRootFolder</td></tr>
+                            <tr><td class="phrase">"open workspace"</td><td class="desc">Open Workspace</td><td class="vsc">workbench.action.openWorkspace</td></tr>
+                            <tr><td class="phrase">"developer tools", "dev tools"</td><td class="desc">Toggle Developer Tools</td><td class="vsc">workbench.action.toggleDevTools</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Multi-Cursor -->
+                    <h3 class="category-header" id="multi-cursor">Multi-Cursor</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"cursor above", "add cursor above"</td><td class="desc">Add Cursor Above</td><td class="vsc">editor.action.insertCursorAbove</td></tr>
+                            <tr><td class="phrase">"cursor below", "add cursor below"</td><td class="desc">Add Cursor Below</td><td class="vsc">editor.action.insertCursorBelow</td></tr>
+                            <tr><td class="phrase">"add next occurrence"</td><td class="desc">Add Next Occurrence</td><td class="vsc">editor.action.addSelectionToNextFindMatch</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Tab Management -->
+                    <h3 class="category-header" id="tab-management">Tab Management</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"next tab"</td><td class="desc">Next Tab</td><td class="vsc">workbench.action.nextEditor</td></tr>
+                            <tr><td class="phrase">"previous tab", "prev tab"</td><td class="desc">Previous Tab</td><td class="vsc">workbench.action.previousEditor</td></tr>
+                            <tr><td class="phrase">"reopen closed tab"</td><td class="desc">Reopen Closed Tab</td><td class="vsc">workbench.action.reopenClosedEditor</td></tr>
+                            <tr><td class="phrase">"move tab left"</td><td class="desc">Move Tab Left</td><td class="vsc">workbench.action.moveEditorLeftInGroup</td></tr>
+                            <tr><td class="phrase">"move tab right"</td><td class="desc">Move Tab Right</td><td class="vsc">workbench.action.moveEditorRightInGroup</td></tr>
+                            <tr><td class="phrase">"close saved tabs"</td><td class="desc">Close Unchanged Editors</td><td class="vsc">workbench.action.closeUnmodifiedEditors</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Debug Controls -->
+                    <h3 class="category-header" id="debug-controls">Debug Controls</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"step over"</td><td class="desc">Step Over</td><td class="vsc">workbench.action.debug.stepOver</td></tr>
+                            <tr><td class="phrase">"step into"</td><td class="desc">Step Into</td><td class="vsc">workbench.action.debug.stepInto</td></tr>
+                            <tr><td class="phrase">"step out"</td><td class="desc">Step Out</td><td class="vsc">workbench.action.debug.stepOut</td></tr>
+                            <tr><td class="phrase">"continue", "resume debugging"</td><td class="desc">Continue Debugging</td><td class="vsc">workbench.action.debug.continue</td></tr>
+                            <tr><td class="phrase">"stop debugging"</td><td class="desc">Stop Debugging</td><td class="vsc">workbench.action.debug.stop</td></tr>
+                            <tr><td class="phrase">"restart debugger"</td><td class="desc">Restart Debugger</td><td class="vsc">workbench.action.debug.restart</td></tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Git Extended & Editor Extended combined for brevity -->
+                    <h3 class="category-header" id="git-extended">Git (Extended)</h3>
+                    <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:0.6rem;">Additional git commands beyond the core set above.</p>
+                    <p style="font-size:0.85rem;">See the <a href="#version-control" style="color:var(--accent);">Version Control</a> section for all 27 git commands.</p>
+
+                    <!-- Layout & Focus -->
+                    <h3 class="category-header" id="editor-extended">Editor (Extended)</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"toggle panel"</td><td class="desc">Toggle Panel</td><td class="vsc">workbench.action.togglePanel</td></tr>
+                            <tr><td class="phrase">"toggle activity bar"</td><td class="desc">Toggle Activity Bar</td><td class="vsc">workbench.action.toggleActivityBarVisibility</td></tr>
+                            <tr><td class="phrase">"toggle status bar"</td><td class="desc">Toggle Status Bar</td><td class="vsc">workbench.action.toggleStatusbarVisibility</td></tr>
+                            <tr><td class="phrase">"toggle tabs"</td><td class="desc">Toggle Tabs Visibility</td><td class="vsc">workbench.action.toggleTabsVisibility</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="category-header" id="layout-focus">Layout &amp; Focus</h3>
+                    <table class="cmd-table">
+                        <thead><tr><th>Example Phrases</th><th>Action</th><th>VS Code Command</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">"focus terminal"</td><td class="desc">Focus Terminal</td><td class="vsc">workbench.action.terminal.focus</td></tr>
+                            <tr><td class="phrase">"focus search"</td><td class="desc">Focus Search</td><td class="vsc">workbench.view.search</td></tr>
+                            <tr><td class="phrase">"focus explorer"</td><td class="desc">Focus Explorer</td><td class="vsc">workbench.view.explorer</td></tr>
+                            <tr><td class="phrase">"focus sidebar"</td><td class="desc">Focus Sidebar</td><td class="vsc">workbench.action.focusSideBar</td></tr>
+                            <tr><td class="phrase">"focus panel"</td><td class="desc">Focus Panel</td><td class="vsc">workbench.action.focusPanel</td></tr>
+                            <tr><td class="phrase">"focus debug console"</td><td class="desc">Focus Debug Console</td><td class="vsc">workbench.debug.action.toggleRepl</td></tr>
+                            <tr><td class="phrase">"focus source control"</td><td class="desc">Focus Source Control</td><td class="vsc">workbench.view.scm</td></tr>
+                            <tr><td class="phrase">"move sidebar", "sidebar position"</td><td class="desc">Toggle Sidebar Position</td><td class="vsc">workbench.action.toggleSidebarPosition</td></tr>
+                            <tr><td class="phrase">"centered layout"</td><td class="desc">Toggle Centered Layout</td><td class="vsc">workbench.action.toggleCenteredLayout</td></tr>
+                            <tr><td class="phrase">"maximize editor"</td><td class="desc">Maximize Editor Group</td><td class="vsc">workbench.action.toggleEditorWidths</td></tr>
+                            <tr><td class="phrase">"rename terminal"</td><td class="desc">Rename Terminal</td><td class="vsc">workbench.action.terminal.rename</td></tr>
+                            <tr><td class="phrase">"close all terminals"</td><td class="desc">Close All Terminals</td><td class="vsc">workbench.action.terminal.killAll</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Tips -->
+                <section id="tips">
+                    <h2>Tips</h2>
+                    <ul>
+                        <li><strong>Be natural.</strong> "run my tests", "test everything", and "execute all tests" all work.</li>
+                        <li><strong>Typos are OK.</strong> Trigram fuzzy correction handles "comit" → "commit", "termnial" → "terminal".</li>
+                        <li><strong>Compound commands.</strong> Use "and" / "then" to chain: "format and save", "stage all then commit".</li>
+                        <li><strong>Trace mode</strong> shows you the full ranked list if you're unsure what Launchpad will pick.</li>
+                        <li><strong>Status bar</strong> shows the last classified intent and confidence in the bottom-right corner.</li>
+                    </ul>
+                </section>
+
+            </div><!-- .content -->
+        </div><!-- .guide-body -->
+
+        <footer class="foot">
+            <span>
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:15px;height:15px;vertical-align:-2px;margin-right:3px;color:var(--accent)">
+                    <path d="M12 52V12l20 40V12" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+                    <path d="M40 52V12h12a10 10 0 0 1 0 20H40" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+                </svg>
+                &copy; 2026 Nascent Poly
+            </span>
+            <span>
+                <a href="https://www.nascentpoly.com/">nascentpoly.com</a>
+                &middot;
+                <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
+            </span>
+        </footer>
+    </main>
+
+    <script>
+        // Live search/filter for command tables
+        const searchInput = document.getElementById("cmdSearch");
+        if (searchInput) {
+            searchInput.addEventListener("input", function () {
+                const q = this.value.toLowerCase().trim();
+                const tables = document.querySelectorAll(".cmd-table");
+                tables.forEach(function (table) {
+                    const rows = table.querySelectorAll("tbody tr");
+                    let anyVisible = false;
+                    rows.forEach(function (row) {
+                        const text = row.textContent.toLowerCase();
+                        const match = !q || text.includes(q);
+                        row.classList.toggle("hidden", !match);
+                        if (match) anyVisible = true;
+                    });
+                    // Hide the category header if no rows match
+                    const header = table.previousElementSibling;
+                    if (header && header.classList.contains("category-header")) {
+                        header.classList.toggle("hidden", !anyVisible && q.length > 0);
+                    }
+                    table.classList.toggle("hidden", !anyVisible && q.length > 0);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

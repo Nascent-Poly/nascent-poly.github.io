@@ -405,7 +405,10 @@
                 </svg>
                 Nascent Poly
             </div>
-            <div class="status">offline-first · deterministic</div>
+            <nav style="display:flex;gap:1rem;align-items:center;">
+                <a href="guide.html" style="font-size:0.82rem;color:var(--text-dim);text-decoration:none;transition:color 150ms;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">User Guide</a>
+                <span class="status">offline-first · deterministic</span>
+            </nav>
         </header>
 
         <section class="hero">
@@ -424,18 +427,20 @@
 
             <aside class="hero-shell" aria-label="Launchpad command preview">
                 <div class="shell-row"><span>&gt;</span> run my tests</div>
-                <div class="shell-row shell-response">Test: Run All Tests</div>
+                <div class="shell-row shell-response">Test: Run All Tests  (98%)</div>
+                <div class="shell-row"><span>&gt;</span> format and save</div>
+                <div class="shell-row shell-response">Format Document → Save File</div>
                 <div class="shell-row"><span>&gt;</span> commit changes</div>
-                <div class="shell-row shell-response">Git: Commit</div>
+                <div class="shell-row shell-response">Git: Commit  (95%)</div>
                 <div class="shell-row"><span>&gt;</span> open terminal</div>
-                <div class="shell-row shell-response">Terminal: Toggle Terminal</div>
+                <div class="shell-row shell-response">Terminal: Toggle Terminal  (97%)</div>
             </aside>
         </section>
 
         <section class="stats" aria-label="Platform metrics">
-            <article class="stat"><strong>195</strong><span>Most-used VS Code commands</span></article>
-            <article class="stat"><strong>&lt;3ms</strong><span>Routing latency</span></article>
-            <article class="stat"><strong>Deterministic</strong><span>Same input, same output</span></article>
+            <article class="stat"><strong>195</strong><span>Natural-language intents</span></article>
+            <article class="stat"><strong>&lt;3ms</strong><span>Classification latency</span></article>
+            <article class="stat"><strong>v1.0</strong><span>Stable release — free &amp; open</span></article>
             <article class="stat"><strong>0</strong><span>External API calls</span></article>
         </section>
 
@@ -455,16 +460,17 @@
             </article>
 
             <article class="panel">
-                <h2>From Seed Product to Platform</h2>
+                <h2>Launchpad v1.0 — What's New</h2>
                 <p>
-                    Launchpad is the first public surface — a VS Code extension that demonstrates
-                    interpreter speed, reliability, and natural-language control.
+                    The first stable release ships 195 intents with compound commands,
+                    user-defined macros, custom command mappings, and usage analytics.
                 </p>
                 <ul class="list">
-                    <li>Natural-language routing for files, Git, tests, and debugging</li>
-                    <li>Trace mode for controlled validation and acceptance testing</li>
-                    <li>Zero dependency on external inference infrastructure</li>
-                    <li>Production roadmap targeting pharma and manufacturing operations</li>
+                    <li>Compound commands — "format and save" runs both in sequence</li>
+                    <li>Macros — define named command sequences in settings</li>
+                    <li>Custom commands — map any phrase to any VS Code command</li>
+                    <li>Usage stats — track your most-used intents locally</li>
+                    <li>Trace mode — see ranked results before choosing</li>
                 </ul>
             </article>
         </section>
@@ -505,6 +511,8 @@
             </span>
             <span>
                 <a href="https://www.nascentpoly.com/">nascentpoly.com</a>
+                &middot;
+                <a href="guide.html">User Guide</a>
                 &middot;
                 <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
             </span>
