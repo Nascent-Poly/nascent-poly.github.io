@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nascent Poly | Natural-Language Interpreter</title>
-    <meta name="description" content="Nascent Poly builds an offline, deterministic natural-language interpreter for regulated teams in pharma and manufacturing.">
+    <title>Launchpad — Natural Language Commands for VS Code</title>
+    <meta name="description" content="Type what you want in plain English. Launchpad runs the right VS Code command. 195 intents, sub-3ms, fully offline — no AI API calls.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M12 52V12l20 40V12' stroke='%2300d4aa' stroke-width='5' fill='none' stroke-linecap='square' stroke-linejoin='miter'/%3E%3Cpath d='M40 52V12h12a10 10 0 0 1 0 20H40' stroke='%2300d4aa' stroke-width='5' fill='none' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,11 +26,7 @@
             --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
@@ -41,15 +37,11 @@
         }
 
         .backdrop {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
+            position: fixed; inset: 0; pointer-events: none;
             background-image:
                 linear-gradient(rgba(0, 212, 170, 0.025) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 212, 170, 0.025) 1px, transparent 1px);
-            background-size: 32px 32px;
-            opacity: 0.7;
-            z-index: 0;
+            background-size: 32px 32px; opacity: 0.7; z-index: 0;
         }
 
         .wrapper {
@@ -65,20 +57,14 @@
         }
 
         .wrapper::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 8%;
-            right: 8%;
-            height: 1px;
+            content: ""; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
             background: linear-gradient(90deg, transparent, var(--accent), transparent);
             opacity: 0.35;
         }
 
+        /* ── Topbar ─────────────────────────────────────────── */
         .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             padding: 0.85rem 1.5rem;
             border-bottom: 1px solid var(--border);
             background: rgba(13, 18, 25, 0.85);
@@ -87,292 +73,214 @@
 
         .brand {
             font-family: "Space Grotesk", sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--text-bright);
-            display: flex;
-            align-items: center;
-            gap: 0.55rem;
+            font-size: 0.9rem; letter-spacing: 0.12em; text-transform: uppercase;
+            font-weight: 700; color: var(--text-bright);
+            display: flex; align-items: center; gap: 0.55rem;
+            text-decoration: none;
         }
+        .brand svg { width: 28px; height: 28px; flex-shrink: 0; color: var(--accent); }
 
-        .brand svg {
-            width: 28px;
-            height: 28px;
-            flex-shrink: 0;
-            color: var(--accent);
+        .topnav { display: flex; gap: 1.2rem; align-items: center; }
+        .topnav a {
+            font-size: 0.82rem; color: var(--text-dim); text-decoration: none;
+            transition: color 150ms; font-weight: 500;
         }
-
-        .status {
+        .topnav a:hover { color: var(--accent); }
+        .topnav .pill {
             font-family: "IBM Plex Mono", monospace;
-            font-size: 0.72rem;
-            color: var(--accent);
-            border: 1px solid var(--accent-line);
-            border-radius: 3px;
-            padding: 0.28rem 0.6rem;
-            background: var(--accent-dim);
+            font-size: 0.72rem; color: var(--accent);
+            border: 1px solid var(--accent-line); border-radius: 3px;
+            padding: 0.28rem 0.6rem; background: var(--accent-dim);
             letter-spacing: 0.04em;
         }
 
+        /* ── Hero ───────────────────────────────────────────── */
         .hero {
-            padding: 3.2rem 1.6rem 2.4rem;
-            display: grid;
-            grid-template-columns: 1.3fr 1fr;
-            gap: 2rem;
-            align-items: center;
+            padding: 3.5rem 1.6rem 2.6rem;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.72rem; letter-spacing: 0.06em;
+            color: var(--accent); border: 1px solid var(--accent-line);
+            border-radius: 100px; padding: 0.3rem 0.9rem;
+            background: var(--accent-dim); margin-bottom: 1.2rem;
         }
 
         h1, h2, h3 {
             font-family: "Space Grotesk", sans-serif;
-            line-height: 1.08;
-            color: var(--text-bright);
+            line-height: 1.08; color: var(--text-bright);
         }
 
         h1 {
-            font-size: clamp(2rem, 4.5vw, 3.5rem);
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
             letter-spacing: -0.03em;
-            max-width: 18ch;
+            max-width: 22ch; margin: 0 auto;
         }
 
-        .hero p {
-            max-width: 52ch;
-            margin-top: 1.1rem;
-            color: var(--text);
-            font-size: 0.98rem;
-            line-height: 1.65;
+        h1 em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--accent), #00e6b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .hero-shell {
-            background: #060a10;
-            color: #5ea88e;
-            border-radius: 6px;
-            padding: 1rem 1.1rem;
-            border: 1px solid var(--border);
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 0.82rem;
-            position: relative;
-            overflow: hidden;
-            transform: translateY(10px);
-            opacity: 0;
-            animation: rise 650ms ease 120ms forwards;
-        }
-
-        .hero-shell::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 212, 170, 0.012) 2px,
-                rgba(0, 212, 170, 0.012) 4px
-            );
-            pointer-events: none;
-        }
-
-        .shell-row {
-            margin-bottom: 0.3rem;
-            line-height: 1.55;
-        }
-
-        .shell-row span {
-            color: var(--accent);
-            margin-right: 0.25rem;
-        }
-
-        .shell-response {
-            color: #3d5e50;
-            padding-left: 1.15rem;
-            margin-bottom: 0.55rem;
-        }
-
-        .hero-main {
-            transform: translateY(14px);
-            opacity: 0;
-            animation: rise 650ms ease forwards;
+        .hero-sub {
+            max-width: 52ch; margin: 1.2rem auto 0;
+            color: var(--text); font-size: 1.05rem; line-height: 1.65;
         }
 
         .cta-row {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
+            display: flex; gap: 0.75rem; flex-wrap: wrap;
+            justify-content: center; margin-top: 1.8rem;
         }
 
         .btn {
-            text-decoration: none;
-            border-radius: 5px;
-            padding: 0.6rem 1.05rem;
-            font-size: 0.88rem;
-            font-weight: 600;
+            text-decoration: none; border-radius: 5px;
+            padding: 0.65rem 1.25rem; font-size: 0.92rem; font-weight: 600;
             transition: transform 150ms ease, box-shadow 150ms ease;
         }
-
         .btn:hover, .btn:focus-visible {
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
         }
-
-        .btn-primary {
-            background: var(--cta);
-            color: #fff;
-        }
-
+        .btn-primary { background: var(--cta); color: #fff; }
         .btn-secondary {
-            border: 1px solid var(--border);
-            color: var(--text-bright);
+            border: 1px solid var(--border); color: var(--text-bright);
             background: var(--surface-2);
         }
+        .btn-secondary:hover { border-color: var(--accent-line); }
 
-        .btn-secondary:hover {
-            border-color: var(--accent-line);
+        /* ── Shell demo ─────────────────────────────────────── */
+        .shell-wrapper {
+            max-width: 560px; margin: 2.4rem auto 0;
         }
 
+        .shell {
+            background: #060a10; color: #5ea88e; border-radius: 8px;
+            padding: 1.1rem 1.3rem; border: 1px solid var(--border);
+            font-family: "IBM Plex Mono", monospace; font-size: 0.84rem;
+            text-align: left; position: relative; overflow: hidden;
+            transform: translateY(10px); opacity: 0;
+            animation: rise 650ms ease 120ms forwards;
+        }
+        .shell::before {
+            content: "Launchpad"; position: absolute; top: 0; left: 0; right: 0;
+            padding: 0.35rem 0.75rem; font-size: 0.65rem; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--text-dim);
+            background: rgba(13, 18, 25, 0.7); border-bottom: 1px solid var(--border);
+        }
+        .shell-body { padding-top: 1.4rem; }
+        .shell-row { margin-bottom: 0.3rem; line-height: 1.55; }
+        .shell-row span { color: var(--accent); margin-right: 0.25rem; }
+        .shell-response {
+            color: #3d5e50; padding-left: 1.15rem; margin-bottom: 0.55rem;
+        }
+        .shell-response .conf {
+            color: var(--text-dim); font-size: 0.75rem;
+        }
+
+        /* ── Stats ──────────────────────────────────────────── */
         .stats {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 0.55rem;
-            padding: 0 1.6rem 1.6rem;
+            display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.55rem; padding: 0 1.6rem 1.6rem;
         }
-
         .stat {
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 0.85rem 0.9rem;
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 6px; padding: 0.85rem 0.9rem;
             transition: border-color 200ms ease;
-            transform: translateY(12px);
-            opacity: 0;
+            transform: translateY(12px); opacity: 0;
             animation: rise 540ms ease forwards;
         }
-
         .stat:nth-child(2) { animation-delay: 60ms; }
         .stat:nth-child(3) { animation-delay: 120ms; }
         .stat:nth-child(4) { animation-delay: 180ms; }
-
-        .stat:hover {
-            border-color: var(--accent-line);
-        }
-
+        .stat:hover { border-color: var(--accent-line); }
         .stat strong {
-            display: block;
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 1.35rem;
-            font-weight: 500;
-            color: var(--accent);
+            display: block; font-family: "IBM Plex Mono", monospace;
+            font-size: 1.35rem; font-weight: 500; color: var(--accent);
             letter-spacing: -0.02em;
         }
+        .stat span { color: var(--text-dim); font-size: 0.8rem; }
 
-        .stat span {
-            color: var(--text-dim);
-            font-size: 0.8rem;
-        }
-
-        .sections {
+        /* ── Feature grid ───────────────────────────────────── */
+        .features {
             padding: 0 1.6rem 1.4rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
             gap: 0.55rem;
         }
 
-        .panel {
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.1rem;
+        .feature {
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 1.1rem;
             transition: border-color 200ms ease;
         }
-
-        .panel:hover {
-            border-color: var(--accent-line);
+        .feature:hover { border-color: var(--accent-line); }
+        .feature h3 {
+            font-size: 0.95rem; margin-bottom: 0.5rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .feature h3 .icon {
+            font-size: 1.05rem; line-height: 1;
+        }
+        .feature p {
+            color: var(--text-dim); font-size: 0.84rem; line-height: 1.5;
         }
 
-        .panel h2 {
-            font-size: 1.05rem;
-            margin-bottom: 0.7rem;
-            letter-spacing: -0.01em;
+        /* ── How it works ───────────────────────────────────── */
+        .how-section {
+            padding: 0 1.6rem 1.4rem;
         }
 
-        .panel p {
-            color: var(--text);
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-            line-height: 1.55;
+        .how-section > h2 {
+            font-size: 1.3rem; margin-bottom: 0.9rem;
+            padding-left: 0.2rem;
         }
 
-        .list {
-            list-style: none;
-            display: grid;
-            gap: 0.45rem;
+        .how-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.55rem;
         }
 
-        .list li {
-            font-size: 0.86rem;
-            color: var(--text-dim);
-            padding-left: 1rem;
-            position: relative;
-            line-height: 1.45;
+        .how-step {
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 1.1rem;
         }
-
-        .list li::before {
-            content: "";
-            width: 4px;
-            height: 4px;
-            border-radius: 1px;
-            background: var(--accent);
-            position: absolute;
-            left: 0;
-            top: 0.42rem;
+        .how-step:hover { border-color: var(--accent-line); }
+        .step-num {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 0.7rem; color: var(--accent);
+            background: var(--accent-dim); border: 1px solid var(--accent-line);
+            border-radius: 3px; padding: 0.15rem 0.45rem;
+            display: inline-block; margin-bottom: 0.6rem;
         }
+        .how-step h3 { font-size: 0.95rem; margin-bottom: 0.4rem; }
+        .how-step p { color: var(--text-dim); font-size: 0.84rem; line-height: 1.5; }
 
+        /* ── Bottom CTA band ────────────────────────────────── */
         .band {
-            margin: 0 1.6rem 1.4rem;
-            border-radius: 8px;
-            padding: 1.1rem 1.3rem;
+            margin: 0 1.6rem 1.4rem; border-radius: 8px;
+            padding: 1.3rem 1.5rem;
             border: 1px solid var(--accent-line);
             background: linear-gradient(110deg, var(--surface-2), var(--surface-3));
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 1rem;
-            align-items: center;
+            text-align: center;
         }
+        .band h3 { color: var(--text-bright); font-size: 1.15rem; margin-bottom: 0.35rem; }
+        .band p { color: var(--text-dim); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem; }
 
-        .band h3 {
-            color: var(--text-bright);
-            font-size: 1.05rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .band p {
-            color: var(--text-dim);
-            font-size: 0.86rem;
-            line-height: 1.5;
-        }
-
+        /* ── Footer ─────────────────────────────────────────── */
         .foot {
             border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 1rem; flex-wrap: wrap;
             padding: 1rem 1.6rem;
-            color: var(--text-dim);
-            font-size: 0.78rem;
+            color: var(--text-dim); font-size: 0.78rem;
             background: rgba(13, 18, 25, 0.6);
         }
-
-        .foot a {
-            color: var(--text);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .foot a:hover {
-            color: var(--accent);
-        }
+        .foot a { color: var(--text); font-weight: 600; text-decoration: none; }
+        .foot a:hover { color: var(--accent); }
 
         @keyframes rise {
             from { transform: translateY(12px); opacity: 0; }
@@ -380,17 +288,16 @@
         }
 
         @media (max-width: 900px) {
-            .hero { grid-template-columns: 1fr; gap: 1.2rem; }
+            .features, .how-grid { grid-template-columns: 1fr 1fr; }
             .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .sections { grid-template-columns: 1fr; }
-            .band { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 560px) {
             .wrapper { width: min(1100px, calc(100% - 0.8rem)); margin-top: 0.4rem; border-radius: 10px; }
             h1 { font-size: 1.8rem; }
-            .topbar, .hero, .stats, .sections, .band, .foot { padding-left: 1rem; padding-right: 1rem; }
+            .features, .how-grid { grid-template-columns: 1fr; }
             .stats { grid-template-columns: 1fr; }
+            .topbar, .hero, .stats, .features, .how-section, .band, .foot { padding-left: 1rem; padding-right: 1rem; }
         }
     </style>
 </head>
@@ -398,107 +305,115 @@
     <div class="backdrop" aria-hidden="true"></div>
     <main class="wrapper">
         <header class="topbar">
-            <div class="brand">
+            <a class="brand" href="/">
                 <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Nascent Poly">
                     <path d="M12 52V12l20 40V12" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
                     <path d="M40 52V12h12a10 10 0 0 1 0 20H40" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
                 </svg>
                 Nascent Poly
-            </div>
-            <nav style="display:flex;gap:1rem;align-items:center;">
-                <a href="guide.html" style="font-size:0.82rem;color:var(--text-dim);text-decoration:none;transition:color 150ms;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">User Guide</a>
-                <span class="status">offline-first · deterministic</span>
+            </a>
+            <nav class="topnav">
+                <a href="guide.html">User Guide</a>
+                <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
+                <span class="pill">v1.0.2</span>
             </nav>
         </header>
 
+        <!-- ── Hero ──────────────────────────────────────── -->
         <section class="hero">
-            <div class="hero-main">
-                <h1>Natural-language interpreter for regulated operations.</h1>
-                <p>
-                    Translates plain-English instructions into precise system actions.
-                    Deterministic behavior. Local execution. Audit-ready workflows.
-                    Built for pharma and manufacturing teams under strict procedural control.
-                </p>
-                <div class="cta-row">
-                    <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Launchpad</a>
-                    <a class="btn btn-secondary" href="mailto:hello@nascentpoly.com">Request Pilot Briefing</a>
+            <div class="hero-badge">VS Code Extension &middot; Free &middot; Offline</div>
+            <h1>Type what you want. <em>Launchpad runs it.</em></h1>
+            <p class="hero-sub">
+                A natural-language command palette for VS Code. 195 intents, sub-3ms classification,
+                zero API calls. Just type plain English and the right command executes.
+            </p>
+            <div class="cta-row">
+                <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Free from Marketplace</a>
+                <a class="btn btn-secondary" href="guide.html">Read the User Guide</a>
+            </div>
+
+            <div class="shell-wrapper">
+                <div class="shell">
+                    <div class="shell-body">
+                        <div class="shell-row"><span>&gt;</span> run my tests</div>
+                        <div class="shell-row shell-response">Test: Run All Tests <span class="conf">(98%)</span></div>
+                        <div class="shell-row"><span>&gt;</span> format and save</div>
+                        <div class="shell-row shell-response">Format Document &rarr; Save File</div>
+                        <div class="shell-row"><span>&gt;</span> commit changes</div>
+                        <div class="shell-row shell-response">Git: Commit <span class="conf">(95%)</span></div>
+                        <div class="shell-row"><span>&gt;</span> open terminal</div>
+                        <div class="shell-row shell-response">Terminal: Toggle Terminal <span class="conf">(97%)</span></div>
+                    </div>
                 </div>
             </div>
-
-            <aside class="hero-shell" aria-label="Launchpad command preview">
-                <div class="shell-row"><span>&gt;</span> run my tests</div>
-                <div class="shell-row shell-response">Test: Run All Tests  (98%)</div>
-                <div class="shell-row"><span>&gt;</span> format and save</div>
-                <div class="shell-row shell-response">Format Document → Save File</div>
-                <div class="shell-row"><span>&gt;</span> commit changes</div>
-                <div class="shell-row shell-response">Git: Commit  (95%)</div>
-                <div class="shell-row"><span>&gt;</span> open terminal</div>
-                <div class="shell-row shell-response">Terminal: Toggle Terminal  (97%)</div>
-            </aside>
         </section>
 
-        <section class="stats" aria-label="Platform metrics">
+        <!-- ── Stats ─────────────────────────────────────── -->
+        <section class="stats" aria-label="Key numbers">
             <article class="stat"><strong>195</strong><span>Natural-language intents</span></article>
             <article class="stat"><strong>&lt;3ms</strong><span>Classification latency</span></article>
-            <article class="stat"><strong>v1.0</strong><span>Stable release — free &amp; open</span></article>
             <article class="stat"><strong>0</strong><span>External API calls</span></article>
+            <article class="stat"><strong>100%</strong><span>Offline &amp; deterministic</span></article>
         </section>
 
-        <section class="sections">
-            <article class="panel">
-                <h2>Interpreter Foundations</h2>
-                <p>
-                    Designed for high-consequence operations where explainability, traceability,
-                    and procedural consistency are requirements — not options.
-                </p>
-                <ul class="list">
-                    <li>Deterministic interpretation — same input, same output, every time</li>
-                    <li>Reviewable decision traces for QA, CAPA, and internal governance</li>
-                    <li>Offline operation for controlled networks and air-gapped environments</li>
-                    <li>Configurable vocabulary for domain terms, SOP language, and operator phrasing</li>
-                </ul>
+        <!-- ── Features ──────────────────────────────────── -->
+        <section class="features" aria-label="Features">
+            <article class="feature">
+                <h3><span class="icon">&oplus;</span> Compound Commands</h3>
+                <p>Chain actions with "and" or "then" &mdash; "format and save" runs both in sequence, instantly.</p>
             </article>
-
-            <article class="panel">
-                <h2>Launchpad v1.0 — What's New</h2>
-                <p>
-                    The first stable release ships 195 intents with compound commands,
-                    user-defined macros, custom command mappings, and usage analytics.
-                </p>
-                <ul class="list">
-                    <li>Compound commands — "format and save" runs both in sequence</li>
-                    <li>Macros — define named command sequences in settings</li>
-                    <li>Custom commands — map any phrase to any VS Code command</li>
-                    <li>Usage stats — track your most-used intents locally</li>
-                    <li>Trace mode — see ranked results before choosing</li>
-                </ul>
+            <article class="feature">
+                <h3><span class="icon">&Omega;</span> Macros</h3>
+                <p>Define named command sequences in your settings. One phrase triggers the whole workflow.</p>
+            </article>
+            <article class="feature">
+                <h3><span class="icon">&Vert;</span> Custom Commands</h3>
+                <p>Map any phrase to any VS Code command. Your vocabulary, your rules.</p>
+            </article>
+            <article class="feature">
+                <h3><span class="icon">&target;</span> Trace Mode</h3>
+                <p>See the full ranked results before committing. Understand exactly what Launchpad picks and why.</p>
+            </article>
+            <article class="feature">
+                <h3><span class="icon">&nearr;</span> Typo Tolerant</h3>
+                <p>Trigram fuzzy matching handles "comit" &rarr; commit, "termnial" &rarr; terminal. Just type naturally.</p>
+            </article>
+            <article class="feature">
+                <h3><span class="icon">&empty;</span> Zero Telemetry</h3>
+                <p>No data leaves your machine. No accounts, no API keys, no opt-out toggles to find.</p>
             </article>
         </section>
 
-        <section class="sections" aria-label="Compliance posture">
-            <article class="panel" style="grid-column: 1 / -1;">
-                <h2>Compliance Posture</h2>
-                <p>
-                    We do not currently claim 21 CFR Part 11 compliance. Current focus: practical readiness —
-                    deterministic behavior, offline operation, audit-oriented workflows. Dated Part 11 readiness program in progress.
-                </p>
-                <ul class="list">
-                    <li>Claimed: built for regulated environments</li>
-                    <li>Claimed: offline, deterministic, audit-oriented workflow support</li>
-                    <li>Not claimed: full 21 CFR Part 11 compliance certification</li>
-                </ul>
-            </article>
-        </section>
-
-        <section class="band">
-            <div>
-                <h3>Onboarding pilot partners in regulated industries.</h3>
-                <p>
-                    Extending the interpreter from developer workflows into production-facing command surfaces
-                    for labs, quality systems, and manufacturing operations.
-                </p>
+        <!-- ── How it works ──────────────────────────────── -->
+        <section class="how-section">
+            <h2>How it works</h2>
+            <div class="how-grid">
+                <article class="how-step">
+                    <span class="step-num">01</span>
+                    <h3>You type a phrase</h3>
+                    <p>Press <kbd style="font-family:'IBM Plex Mono',monospace;font-size:0.8em;background:var(--surface-3);padding:0.1em 0.35em;border-radius:3px;border:1px solid var(--border);">Ctrl+Shift+.</kbd> and type what you want in plain English.</p>
+                </article>
+                <article class="how-step">
+                    <span class="step-num">02</span>
+                    <h3>Launchpad classifies it</h3>
+                    <p>A deterministic scoring engine matches your input to one of 195 intents in under 3ms. No cloud, no LLM.</p>
+                </article>
+                <article class="how-step">
+                    <span class="step-num">03</span>
+                    <h3>VS Code executes it</h3>
+                    <p>The matched command runs immediately. Compound phrases execute each part in sequence.</p>
+                </article>
             </div>
-            <a class="btn btn-primary" href="mailto:hello@nascentpoly.com">Contact Nascent Poly</a>
+        </section>
+
+        <!-- ── Bottom CTA ────────────────────────────────── -->
+        <section class="band">
+            <h3>Ready to stop memorizing command names?</h3>
+            <p>Install Launchpad and start typing naturally. Free, offline, instant.</p>
+            <div class="cta-row">
+                <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Launchpad</a>
+                <a class="btn btn-secondary" href="guide.html">View All 195 Commands</a>
+            </div>
         </section>
 
         <footer class="foot">
@@ -510,11 +425,11 @@
                 &copy; 2026 Nascent Poly
             </span>
             <span>
-                <a href="https://www.nascentpoly.com/">nascentpoly.com</a>
-                &middot;
                 <a href="guide.html">User Guide</a>
                 &middot;
                 <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
+                &middot;
+                <a href="mailto:hello@nascentpoly.com">Contact</a>
             </span>
         </footer>
     </main>
