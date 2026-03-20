@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120">
+  <!-- Nascent Poly — Stacked Logo (monogram + wordmark below) -->
+
+  <!-- NP Monogram (centered) -->
+  <g transform="translate(68, 4)">
+    <path d="M12 52V12l20 40V12" stroke="#00d4aa" stroke-width="5" fill="none"
+          stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M40 52V12h12a10 10 0 0 1 0 20H40" stroke="#00d4aa" stroke-width="5"
+          fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+
+  <!-- Accent underline -->
+  <line x1="60" y1="68" x2="140" y2="68" stroke="#00d4aa" stroke-width="1" opacity="0.25"/>
+
+  <!-- Company name -->
+  <text x="100" y="88" text-anchor="middle"
+        font-family="'Space Grotesk', system-ui, -apple-system, sans-serif"
+        font-size="15" font-weight="700" fill="#e2ecf4"
+        letter-spacing="3.5" text-rendering="geometricPrecision">NASCENT</text>
+  <text x="100" y="106" text-anchor="middle"
+        font-family="'Space Grotesk', system-ui, -apple-system, sans-serif"
+        font-size="15" font-weight="700" fill="#e2ecf4"
+        letter-spacing="3.5" text-rendering="geometricPrecision">POLY</text>
+</svg>

@@ -361,12 +361,13 @@
             <nav class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="guide.html" class="active">User Guide</a>
+                <a href="pro.html">Pro</a>
                 <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install</a>
             </nav>
         </header>
 
         <section class="guide-hero">
-            <h1>Launchpad User Guide <span class="version-badge">v1.0.2</span></h1>
+            <h1>Launchpad User Guide <span class="version-badge">v1.1.0</span></h1>
             <p>
                 Type what you want in plain English. Launchpad classifies your intent and runs the
                 right VS Code command. 195 intents, sub-3ms, fully offline.
@@ -384,11 +385,12 @@
                 <a href="#compound-commands">Compound Commands</a>
                 <a href="#macros">Macros</a>
                 <a href="#custom-commands">Custom Commands</a>
-                <a href="#configurator">Configurator</a>
-                <a href="#action-runner">Action Runner</a>
-                <a href="#script-generator">Script Generator</a>
+                <a href="#configurator">Configurator &#9733;</a>
+                <a href="#action-runner">Action Runner &#9733;</a>
+                <a href="#script-generator">Script Generator &#9733;</a>
                 <a href="#trace-mode">Trace Mode</a>
-                <a href="#usage-stats">Usage Stats</a>
+                <a href="#usage-stats">Usage Stats &#9733;</a>
+                <a href="#license">License Management</a>
                 <div class="toc-head">Command Reference</div>
                 <a href="#file-ops">File Operations</a>
                 <a href="#version-control">Version Control</a>
@@ -580,7 +582,7 @@
 
                 <!-- Configurator -->
                 <section id="configurator">
-                    <h2>Visual Configurator</h2>
+                    <h2>Visual Configurator <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;font-weight:600;color:#fbbf24;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:3px;padding:0.12rem 0.4rem;text-transform:uppercase;letter-spacing:0.05em;vertical-align:middle;margin-left:0.4rem;">Pro</span></h2>
                     <p>
                         Run <strong>Launchpad: Configure</strong> from the Command Palette to open the
                         visual configurator &mdash; a built-in UI for building shortcuts and workflows
@@ -612,7 +614,7 @@
 
                 <!-- Action Runner -->
                 <section id="action-runner">
-                    <h2>Action Runner</h2>
+                    <h2>Action Runner <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;font-weight:600;color:#fbbf24;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:3px;padding:0.12rem 0.4rem;text-transform:uppercase;letter-spacing:0.05em;vertical-align:middle;margin-left:0.4rem;">Pro</span></h2>
                     <p>
                         The action runner powers macro execution. Beyond simple VS Code commands,
                         macros can open folders, jump to lines, type text, select ranges, insert
@@ -632,7 +634,7 @@
 
                 <!-- Script Generator -->
                 <section id="script-generator">
-                    <h2>Script Generator</h2>
+                    <h2>Script Generator <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;font-weight:600;color:#fbbf24;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:3px;padding:0.12rem 0.4rem;text-transform:uppercase;letter-spacing:0.05em;vertical-align:middle;margin-left:0.4rem;">Pro</span></h2>
                     <p>
                         Say <strong>&ldquo;create a flask server&rdquo;</strong> or <strong>&ldquo;write a dockerfile&rdquo;</strong>
                         and Launchpad generates a complete, ready-to-run file. 14 templates built in:
@@ -670,13 +672,35 @@
 
                 <!-- Usage Stats -->
                 <section id="usage-stats">
-                    <h2>Usage Stats</h2>
+                    <h2>Usage Stats <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;font-weight:600;color:#fbbf24;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:3px;padding:0.12rem 0.4rem;text-transform:uppercase;letter-spacing:0.05em;vertical-align:middle;margin-left:0.4rem;">Pro</span></h2>
                     <p>
                         Launchpad records which commands you use (intent + confidence only &mdash; no raw
                         input stored). View your stats with the <strong>Launchpad: Show Usage Stats</strong>
                         command from the Command Palette.
                     </p>
                     <p>All data is stored locally and never transmitted.</p>
+                </section>
+
+                <!-- License Management -->
+                <section id="license">
+                    <h2>License Management</h2>
+                    <p>
+                        Launchpad uses a freemium model. The free tier includes all 195 intents, compound commands,
+                        customs, macros, trace mode, and typo tolerance. Pro unlocks voice commands, the visual
+                        configurator, script generator, action runner, preset browser, and usage stats.
+                    </p>
+                    <h3>Activating a Pro License</h3>
+                    <ol>
+                        <li>Purchase a license at <a href="https://www.nascentpoly.com/pro" style="color:var(--accent)">nascentpoly.com/pro</a></li>
+                        <li>In VS Code, run <code>Launchpad: Activate Pro</code> from the Command Palette</li>
+                        <li>Paste your license key and press Enter</li>
+                    </ol>
+                    <h3>Managing Your License</h3>
+                    <p>
+                        Run <code>Launchpad: Manage License</code> to see your current status, deactivate a machine,
+                        or re-enter a license key. Each key supports up to 3 machines. The status bar shows
+                        &ldquo;Launchpad Pro&rdquo; when active.
+                    </p>
                 </section>
 
                 <!-- COMMAND REFERENCE -->
@@ -1033,6 +1057,8 @@
             </span>
             <span>
                 <a href="https://www.nascentpoly.com/">nascentpoly.com</a>
+                &middot;
+                <a href="pro.html">Pro</a>
                 &middot;
                 <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
             </span>

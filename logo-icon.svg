@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Nascent Poly — App Icon / Social Avatar -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1219"/>
+      <stop offset="100%" stop-color="#141c28"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="128" height="128" rx="28" ry="28" fill="url(#bg)"/>
+
+  <!-- Subtle border glow -->
+  <rect width="128" height="128" rx="28" ry="28" fill="none"
+        stroke="rgba(0,212,170,0.15)" stroke-width="1"/>
+
+  <!-- Top accent line -->
+  <line x1="32" y1="1" x2="96" y2="1" stroke="#00d4aa" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- NP Monogram (centered, scaled up) -->
+  <g transform="translate(18, 22) scale(1.4)">
+    <path d="M12 52V12l20 40V12" stroke="#00d4aa" stroke-width="4.5" fill="none"
+          stroke-linecap="square" stroke-linejoin="miter"/>
+    <path d="M40 52V12h12a10 10 0 0 1 0 20H40" stroke="#00d4aa" stroke-width="4.5"
+          fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+
+  <!-- Wordmark below monogram -->
+  <text x="64" y="118" text-anchor="middle"
+        font-family="'Space Grotesk', system-ui, sans-serif"
+        font-size="9" font-weight="700" fill="#556878"
+        letter-spacing="3" text-rendering="geometricPrecision">NASCENT POLY</text>
+</svg>

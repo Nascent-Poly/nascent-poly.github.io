@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Launchpad — Natural Language Commands for VS Code</title>
-    <meta name="description" content="Type what you want in plain English. Launchpad runs the right VS Code command. 195 intents, sub-3ms, fully offline — no AI API calls.">
+    <meta name="description" content="Type or speak what you want in plain English. Launchpad runs the right VS Code command. 195 intents, sub-3ms, fully offline, voice commands — no AI API calls.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M12 52V12l20 40V12' stroke='%2300d4aa' stroke-width='5' fill='none' stroke-linecap='square' stroke-linejoin='miter'/%3E%3Cpath d='M40 52V12h12a10 10 0 0 1 0 20H40' stroke='%2300d4aa' stroke-width='5' fill='none' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -314,22 +314,23 @@
             </a>
             <nav class="topnav">
                 <a href="guide.html">User Guide</a>
+                <a href="pro.html">Pro</a>
                 <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
-                <span class="pill">v1.0.2</span>
+                <span class="pill">v1.1.0</span>
             </nav>
         </header>
 
         <!-- ── Hero ──────────────────────────────────────── -->
         <section class="hero">
-            <div class="hero-badge">VS Code Extension &middot; Free &middot; Offline</div>
+            <div class="hero-badge">VS Code Extension &middot; Free &amp; Pro &middot; Offline</div>
             <h1>Type what you want. <em>Launchpad runs it.</em></h1>
             <p class="hero-sub">
                 A natural-language command palette for VS Code. 195 intents, sub-3ms classification,
-                zero API calls. Just type plain English and the right command executes.
+                zero API calls. Type or speak plain English and the right command executes.
             </p>
             <div class="cta-row">
                 <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Free from Marketplace</a>
-                <a class="btn btn-secondary" href="guide.html">Read the User Guide</a>
+                <a class="btn btn-secondary" href="pro.html">Upgrade to Pro</a>
             </div>
 
             <div class="shell-wrapper">
@@ -406,13 +407,178 @@
             </div>
         </section>
 
+        <!-- ── Voice Demo ─────────────────────────────────── -->
+        <section class="how-section" id="voice">
+            <h2><span style="color:var(--accent)">&#127908;</span> Voice Commands</h2>
+            <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:0.9rem;">
+                Speak instead of type. Press <kbd style="font-family:'IBM Plex Mono',monospace;font-size:0.8em;background:var(--surface-3);padding:0.1em 0.35em;border-radius:3px;border:1px solid var(--border);">Ctrl+Shift+/</kbd> and say your command &mdash; Launchpad transcribes and executes, fully offline.
+            </p>
+            <div class="voice-demo" style="max-width:480px;margin:0 auto;">
+                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:1.3rem;text-align:center;">
+                    <div id="voiceMicRing" style="width:72px;height:72px;margin:0 auto 1rem;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:border-color 300ms,box-shadow 300ms;cursor:pointer;" onclick="startVoiceDemo()">
+                        <span style="font-size:1.7rem;line-height:1;">&#127908;</span>
+                    </div>
+                    <p id="voiceHeading" style="font-size:0.95rem;font-weight:600;color:var(--text-bright);margin-bottom:0.2rem;">Click to try voice input</p>
+                    <p id="voiceStatus" style="color:var(--text-dim);font-size:0.82rem;margin-bottom:0.8rem;">Requires microphone permission</p>
+                    <div id="voiceTranscript" style="font-family:'IBM Plex Mono',monospace;font-size:0.95rem;color:var(--accent);min-height:1.5rem;padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:5px;background:var(--surface);margin-bottom:0.6rem;word-break:break-word;"></div>
+                    <div id="voiceResult" style="font-size:0.88rem;color:var(--text);min-height:1.3rem;"></div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+        // Voice demo — maps common spoken phrases to simulated Launchpad results
+        (function() {
+            const DEMO_MAP = {
+                "run my tests": { cmd: "Test: Run All Tests", pct: 98 },
+                "run tests": { cmd: "Test: Run All Tests", pct: 98 },
+                "commit changes": { cmd: "Git: Commit", pct: 95 },
+                "commit my changes": { cmd: "Git: Commit", pct: 95 },
+                "push changes": { cmd: "Git: Push", pct: 97 },
+                "push to remote": { cmd: "Git: Push", pct: 97 },
+                "format the code": { cmd: "Format Document", pct: 92 },
+                "format this file": { cmd: "Format Document", pct: 92 },
+                "format and save": { cmd: "Format Document → Save File", pct: 90 },
+                "open terminal": { cmd: "Toggle Terminal", pct: 97 },
+                "open the terminal": { cmd: "Toggle Terminal", pct: 97 },
+                "toggle terminal": { cmd: "Toggle Terminal", pct: 97 },
+                "go to definition": { cmd: "Go to Definition", pct: 96 },
+                "go to the definition": { cmd: "Go to Definition", pct: 96 },
+                "change theme": { cmd: "Color Theme", pct: 94 },
+                "change the theme": { cmd: "Color Theme", pct: 94 },
+                "close all tabs": { cmd: "Close All Editors", pct: 93 },
+                "save this file": { cmd: "Save File", pct: 99 },
+                "save file": { cmd: "Save File", pct: 99 },
+                "open a file": { cmd: "Quick Open File", pct: 96 },
+                "open file": { cmd: "Quick Open File", pct: 96 },
+                "zoom in": { cmd: "Zoom In", pct: 99 },
+                "zoom out": { cmd: "Zoom Out", pct: 99 },
+                "toggle sidebar": { cmd: "Toggle Sidebar", pct: 96 },
+                "split editor": { cmd: "Split Editor Right", pct: 94 },
+                "split the editor": { cmd: "Split Editor Right", pct: 94 },
+                "search code": { cmd: "Find in Files", pct: 91 },
+                "search my code": { cmd: "Find in Files", pct: 91 },
+                "debug": { cmd: "Start Debugging", pct: 95 },
+                "start debugging": { cmd: "Start Debugging", pct: 95 },
+                "commit and push": { cmd: "Git: Commit → Git: Push", pct: 93 },
+                "toggle comment": { cmd: "Toggle Line Comment", pct: 96 },
+            };
+            function bestMatch(text) {
+                const t = text.toLowerCase().replace(/[^a-z ]/g, "").trim();
+                if (DEMO_MAP[t]) return DEMO_MAP[t];
+                let best = null, bestScore = 0;
+                for (const [phrase, val] of Object.entries(DEMO_MAP)) {
+                    const words = phrase.split(" ");
+                    const matched = words.filter(w => t.includes(w)).length;
+                    const score = matched / words.length;
+                    if (score > bestScore && score >= 0.5) { bestScore = score; best = val; }
+                }
+                return best;
+            }
+
+            let recognition = null;
+            window.startVoiceDemo = function() {
+                const ring = document.getElementById("voiceMicRing");
+                const heading = document.getElementById("voiceHeading");
+                const status = document.getElementById("voiceStatus");
+                const transcript = document.getElementById("voiceTranscript");
+                const result = document.getElementById("voiceResult");
+
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SR) {
+                    heading.textContent = "Not supported in this browser";
+                    status.textContent = "Try Chrome, Edge, or Brave.";
+                    return;
+                }
+                if (recognition) { recognition.abort(); }
+
+                recognition = new SR();
+                recognition.lang = "en-US";
+                recognition.interimResults = true;
+                recognition.continuous = false;
+
+                ring.style.borderColor = "var(--accent)";
+                ring.style.boxShadow = "0 0 0 6px rgba(0,212,170,0.12), 0 0 20px rgba(0,212,170,0.15)";
+                heading.textContent = "Listening...";
+                status.textContent = "Speak a command";
+                transcript.textContent = "";
+                result.textContent = "";
+
+                let final = "";
+                recognition.onresult = function(e) {
+                    let interim = "";
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        if (e.results[i].isFinal) final = e.results[i][0].transcript.trim();
+                        else interim += e.results[i][0].transcript;
+                    }
+                    transcript.textContent = final || interim;
+                };
+                recognition.onend = function() {
+                    ring.style.boxShadow = "none";
+                    if (final) {
+                        const match = bestMatch(final);
+                        ring.style.borderColor = "#a6e3a1";
+                        heading.textContent = "Got it!";
+                        if (match) {
+                            result.innerHTML = '<span style="color:var(--accent)">→ ' + match.cmd + '</span> <span style="color:var(--text-dim);font-size:0.8rem;">(' + match.pct + '%)</span>';
+                            status.textContent = "This is what Launchpad would execute.";
+                        } else {
+                            result.innerHTML = '<span style="color:var(--text-dim)">Launchpad would classify and run the best match.</span>';
+                            status.textContent = "Install the extension to see all 195 intents.";
+                        }
+                    } else {
+                        ring.style.borderColor = "#f38ba8";
+                        heading.textContent = "No speech detected";
+                        status.textContent = "Click the mic to try again.";
+                    }
+                };
+                recognition.onerror = function(e) {
+                    ring.style.boxShadow = "none";
+                    ring.style.borderColor = "#f38ba8";
+                    if (e.error === "not-allowed") {
+                        heading.textContent = "Microphone blocked";
+                        status.textContent = "Allow microphone access and try again.";
+                    } else {
+                        heading.textContent = "Error: " + e.error;
+                        status.textContent = "Click the mic to retry.";
+                    }
+                };
+                recognition.start();
+            };
+        })();
+        </script>
+
+        <!-- ── Pro Teaser ────────────────────────────────── -->
+        <section class="how-section">
+            <h2 style="margin-bottom:0.6rem;">&#11088; Unlock more with <span style="color:#fbbf24">Launchpad Pro</span></h2>
+            <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:0.9rem;max-width:60ch;">
+                Voice commands, visual configurator, script generator, action runner, preset browser, and usage analytics.
+                All local, all instant.
+            </p>
+            <div class="how-grid" style="grid-template-columns:1fr 1fr;">
+                <article class="how-step">
+                    <span class="step-num" style="color:#fbbf24;border-color:rgba(251,191,36,0.25);background:rgba(251,191,36,0.08);">PRO</span>
+                    <h3>&#127908; Voice &amp; Configurator</h3>
+                    <p>Speak commands hands-free. Edit custom commands visually without touching JSON.</p>
+                </article>
+                <article class="how-step">
+                    <span class="step-num" style="color:#fbbf24;border-color:rgba(251,191,36,0.25);background:rgba(251,191,36,0.08);">PRO</span>
+                    <h3>&#9889; Scripts &amp; Workflows</h3>
+                    <p>Generate shell scripts from natural language. Chain multi-step actions into automated workflows.</p>
+                </article>
+            </div>
+            <div class="cta-row" style="margin-top:1rem;">
+                <a class="btn btn-primary" href="pro.html">See Pro Plans &amp; Pricing</a>
+            </div>
+        </section>
+
         <!-- ── Bottom CTA ────────────────────────────────── -->
         <section class="band">
             <h3>Ready to stop memorizing command names?</h3>
-            <p>Install Launchpad and start typing naturally. Free, offline, instant.</p>
+            <p>Install Launchpad and start typing &mdash; or speaking &mdash; naturally. Free to start, Pro to supercharge.</p>
             <div class="cta-row">
-                <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Launchpad</a>
-                <a class="btn btn-secondary" href="guide.html">View All 195 Commands</a>
+                <a class="btn btn-primary" href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Install Free</a>
+                <a class="btn btn-secondary" href="pro.html">Get Pro</a>
             </div>
         </section>
 
@@ -426,6 +592,8 @@
             </span>
             <span>
                 <a href="guide.html">User Guide</a>
+                &middot;
+                <a href="pro.html">Pro</a>
                 &middot;
                 <a href="https://marketplace.visualstudio.com/items?itemName=NascentPoly.launchpad-command-palette">Marketplace</a>
                 &middot;

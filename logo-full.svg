@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" width="320" height="64">
+  <!-- Nascent Poly — Horizontal Logo Lockup -->
+
+  <!-- NP Monogram -->
+  <path d="M12 52V12l20 40V12" stroke="#00d4aa" stroke-width="5" fill="none"
+        stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M40 52V12h12a10 10 0 0 1 0 20H40" stroke="#00d4aa" stroke-width="5"
+        fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+
+  <!-- Divider -->
+  <line x1="72" y1="18" x2="72" y2="46" stroke="#1a2535" stroke-width="1"/>
+
+  <!-- Wordmark -->
+  <text x="84" y="38" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif"
+        font-size="18" font-weight="700" fill="#e2ecf4"
+        letter-spacing="2.2" text-rendering="geometricPrecision">NASCENT POLY</text>
+</svg>
