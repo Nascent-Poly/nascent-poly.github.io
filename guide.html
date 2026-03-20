@@ -384,6 +384,9 @@
                 <a href="#compound-commands">Compound Commands</a>
                 <a href="#macros">Macros</a>
                 <a href="#custom-commands">Custom Commands</a>
+                <a href="#configurator">Configurator</a>
+                <a href="#action-runner">Action Runner</a>
+                <a href="#script-generator">Script Generator</a>
                 <a href="#trace-mode">Trace Mode</a>
                 <a href="#usage-stats">Usage Stats</a>
                 <div class="toc-head">Command Reference</div>
@@ -528,6 +531,33 @@
 &gt; cleanup
   Macro: cleanup  (runs 4 commands in sequence)</code></pre>
                     <p>Macros are checked before classification &mdash; if a macro name matches your input, it runs immediately without going through the engine.</p>
+                    <h3>Action Steps</h3>
+                    <p>Macros support 7 action types beyond simple command IDs. Each step in a macro can be a string (backward compatible) or an action object:</p>
+                    <pre><code>"launchpad.macros": {
+    "my app": [
+        { "action": "open", "path": "C:/projects/my-app" },
+        { "action": "command", "command": "workbench.action.terminal.new" },
+        { "action": "delay", "ms": 300 },
+        { "action": "type", "text": "npm run dev\n" }
+    ],
+    "morning standup": [
+        { "action": "open", "path": "C:/projects/my-app" },
+        { "action": "command", "command": "git.pull" },
+        { "action": "command", "command": "workbench.actions.view.problems" }
+    ]
+}</code></pre>
+                    <table class="cmd-table">
+                        <thead><tr><th>Action</th><th>Fields</th><th>Description</th></tr></thead>
+                        <tbody>
+                            <tr><td class="phrase">command</td><td class="desc">command, args</td><td class="vsc">Run a VS Code command</td></tr>
+                            <tr><td class="phrase">open</td><td class="desc">path</td><td class="vsc">Open a file or folder</td></tr>
+                            <tr><td class="phrase">goto</td><td class="desc">line, col</td><td class="vsc">Jump to line and column</td></tr>
+                            <tr><td class="phrase">type</td><td class="desc">text</td><td class="vsc">Insert text at cursor</td></tr>
+                            <tr><td class="phrase">select</td><td class="desc">from {line,col}, to {line,col}</td><td class="vsc">Select a text range</td></tr>
+                            <tr><td class="phrase">snippet</td><td class="desc">body</td><td class="vsc">Insert a VS Code snippet</td></tr>
+                            <tr><td class="phrase">delay</td><td class="desc">ms</td><td class="vsc">Wait before next step (max 10s)</td></tr>
+                        </tbody>
+                    </table>
                 </section>
 
                 <!-- Custom Commands -->
@@ -545,6 +575,77 @@
                     <p>
                         Custom commands are checked before the classification engine. Type the
                         exact phrase and Launchpad will execute the mapped command directly.
+                    </p>
+                </section>
+
+                <!-- Configurator -->
+                <section id="configurator">
+                    <h2>Visual Configurator</h2>
+                    <p>
+                        Run <strong>Launchpad: Configure</strong> from the Command Palette to open the
+                        visual configurator &mdash; a built-in UI for building shortcuts and workflows
+                        without editing JSON.
+                    </p>
+                    <h3>Simple &amp; Pro Modes</h3>
+                    <p>The configurator has two modes, toggled from the top-right corner:</p>
+                    <ul>
+                        <li><strong>Simple mode</strong> (default) &mdash; designed for non-technical users.
+                            Categorized action dropdowns (Debug, Files, Editor, Git, etc.), visual
+                            workflow blocks with icons, friendly labels like &ldquo;When I say&hellip;&rdquo;
+                            and &ldquo;Do this:&rdquo;. No command IDs to memorize.</li>
+                        <li><strong>Pro mode</strong> &mdash; full control with raw command ID inputs,
+                            all 7 action types exposed, and a Built-in Intents browser showing
+                            all 195 intents with their descriptions and mapped commands.</li>
+                    </ul>
+                    <h3>Preset Packs</h3>
+                    <p>Load themed presets to populate your config instantly:</p>
+                    <ul>
+                        <li><strong>Space Command Center</strong> &mdash; 18 commands + 4 macros (&ldquo;launch sequence&rdquo;, &ldquo;pre-flight check&rdquo;)</li>
+                        <li><strong>DevOps Mission Control</strong> &mdash; 10 commands + 3 macros (&ldquo;pipeline status&rdquo;, &ldquo;rollback deploy&rdquo;)</li>
+                        <li><strong>Power User Essentials</strong> &mdash; 12 commands + 3 macros (&ldquo;deep focus&rdquo;, &ldquo;save and format&rdquo;)</li>
+                        <li><strong>Git Flight Deck</strong> &mdash; 12 commands + 3 macros (&ldquo;clean commit&rdquo;, &ldquo;quick push&rdquo;)</li>
+                        <li><strong>Script Generator Phrases</strong> &mdash; 16 commands + 1 macro (trigger script generation)</li>
+                        <li><strong>Workspace Launcher</strong> &mdash; 4 commands + 9 macros (&ldquo;my app&rdquo;, &ldquo;morning standup&rdquo;, &ldquo;new branch&rdquo;)</li>
+                    </ul>
+                    <p>Presets merge with existing settings &mdash; they never overwrite your custom work.</p>
+                </section>
+
+                <!-- Action Runner -->
+                <section id="action-runner">
+                    <h2>Action Runner</h2>
+                    <p>
+                        The action runner powers macro execution. Beyond simple VS Code commands,
+                        macros can open folders, jump to lines, type text, select ranges, insert
+                        snippets, and add delays between steps.
+                    </p>
+                    <div class="callout">
+                        <strong>Example: One-word workspace launcher</strong>
+                        <p>Say <strong>&ldquo;my app&rdquo;</strong> and your project folder opens, a terminal
+                        spawns, waits 300ms, then Quick Open appears &mdash; all from a single phrase.</p>
+                    </div>
+                    <p>
+                        Configure action macros visually in the Configurator (Simple mode shows
+                        friendly blocks like &ldquo;Open folder or file&rdquo; and &ldquo;Type some text&rdquo;)
+                        or edit the JSON in settings directly.
+                    </p>
+                </section>
+
+                <!-- Script Generator -->
+                <section id="script-generator">
+                    <h2>Script Generator</h2>
+                    <p>
+                        Say <strong>&ldquo;create a flask server&rdquo;</strong> or <strong>&ldquo;write a dockerfile&rdquo;</strong>
+                        and Launchpad generates a complete, ready-to-run file. 14 templates built in:
+                    </p>
+                    <ul>
+                        <li>Flask &middot; Express &middot; FastAPI &middot; React Component &middot; HTML5 Landing Page</li>
+                        <li>Dockerfile &middot; GitHub Actions CI &middot; Bash Deploy Script</li>
+                        <li>Python CLI &middot; WebSocket Server &middot; Data Pipeline</li>
+                        <li>Jest Tests &middot; Pytest Tests &middot; Makefile</li>
+                    </ul>
+                    <p>
+                        Run <strong>Launchpad: Browse Templates</strong> from the Command Palette
+                        to pick from the full catalog organized by category.
                     </p>
                 </section>
 
